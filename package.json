@@ -1,0 +1,19 @@
+{
+  "name": "paginaejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server-prueba.js",
+    "watch": "node --watch server-prueba.js",
+    "dev-no": "node server.js",
+    "watch-no": "node --watch server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.1"
+  }
+}
