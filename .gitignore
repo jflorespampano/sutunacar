@@ -1,1 +1,17 @@
 node_modules
+# Ignorar la carpeta de dependencias
+node_modules/
+
+# Ignorar archivos de entorno
+.env
+
+# Ignorar logs
+*.log
+npm-debug.log*
+
+# Ignorar cache
+.cache/
+
+# Ignorar compilados
+dist/
+build/
