@@ -53,7 +53,7 @@ let datosEmpleado={
 let datosCalculo={
     "sb":0,
     "quinquenio":0,
-    "arteydespensa":1088.00,
+    "despensa":1088.00,
     "arte":288.84,
     "primavacacional":0,
     "estimulocalidad":0,
@@ -106,8 +106,8 @@ function calcularQuinquenio(tipoEmpleado){
     if(tipoEmpleado.antiguedad >= 25) {porcentaje = tipo == "ACA" ? 0.18 : 0.17}
     //
     const montoQuinquenio=tipoEmpleado.sb * porcentaje
-    console.log("(95)sb",tipoEmpleado.sb)
-    console.log("(96)% quinquenio",porcentaje)
+    // console.log("(95)sb",tipoEmpleado.sb)
+    // console.log("(96)% quinquenio",porcentaje)
     return {porcentaje,montoQuinquenio}
 }
 
@@ -124,6 +124,11 @@ function quinquenio(datosEmpleado){
     return {porcentaje,montoQuinquenio}
 }
 
+function formateaNumero(numero){
+    let tmp=numero.toFixed(2)
+    return parseFloat(tmp).toLocaleString('en-US')
+}
+
 /**
 * llena la tabla html con los datos del cálculo
 * @param {datosCalculo} datosCalculo
@@ -136,36 +141,20 @@ function llenarDatosTabla(datosCalculo){
     const primera_letra = registro.clave[0]
     const categoria = primera_letra == 'A' ? "ADMINISTRATIVO" : "ACADEMICO"
     document.querySelector("#tbl_categoria").innerHTML=categoria
-    // document.querySelector("#tbl_sb").innerHTML=datosCalculo.sb
     document.querySelector("#tbl_sb").innerHTML=datosCalculo.sb.toLocaleString('en-US')
-    let redondeado=datosCalculo.quinquenio.toFixed(2)
-    document.querySelector("#tbl_quinquenio").innerHTML=
-        parseFloat(redondeado).toLocaleString("en-US")
-    redondeado=datosCalculo.arteydespensa.toFixed(2)
-    document.querySelector("#tbl_arteydespensa").innerHTML=
-        parseFloat(redondeado).toFixed(2).toLocaleString("en-US")
-    redondeado=datosCalculo.arte.toFixed(2)
-    document.querySelector("#tbl_arte").innerHTML=
-        parseFloat(redondeado).toFixed(2).toLocaleString("en-US")
-    redondeado=datosCalculo.primavacacional.toFixed(2)
-    document.querySelector("#tbl_primaVacacional").innerHTML=
-        parseFloat(redondeado).toFixed(2).toLocaleString("en-US")
-    redondeado=datosCalculo.estimulocalidad.toFixed(2)
-    document.querySelector("#tbl_estimulocalidad").innerHTML=
-        parseFloat(redondeado).toFixed(2).toLocaleString("en-US")
-    redondeado=datosCalculo.ajustecalendario.toFixed(2)
-    document.querySelector("#tbl_ajustecalendario").innerHTML=
-        parseFloat(redondeado).toFixed(2).toLocaleString("en-US")
-    redondeado=datosCalculo.totalsc.toFixed(2)
-    document.querySelector("#tbl_totalsc").innerHTML=
-        parseFloat(redondeado).toLocaleString("en-US")
-    
+
+    document.querySelector("#tbl_quinquenio").innerHTML=formateaNumero(datosCalculo.quinquenio)
+    document.querySelector("#tbl_despensa").innerHTML=formateaNumero(datosCalculo.despensa)
+    document.querySelector("#tbl_arte").innerHTML=formateaNumero(datosCalculo.arte)
+    document.querySelector("#tbl_primaVacacional").innerHTML=formateaNumero(datosCalculo.primavacacional)
+    document.querySelector("#tbl_estimulocalidad").innerHTML=formateaNumero(datosCalculo.estimulocalidad)
+    document.querySelector("#tbl_ajustecalendario").innerHTML=formateaNumero(datosCalculo.ajustecalendario)
+    document.querySelector("#tbl_totalsc").innerHTML=formateaNumero(datosCalculo.totalsc)
+
     document.querySelector("#tbl_antiguedad").innerHTML=datosCalculo.antiguedad
     document.querySelector("#tbl_edad").innerHTML=datosCalculo.edad
     document.querySelector("#tbl_diferencia").innerHTML=datosCalculo.diferencia
-    //
     document.querySelector("#tbl_edad_obligatoria").innerHTML=datosCalculo.edadLaboralObligatoria
-    //
 
     return true
 }
@@ -178,17 +167,18 @@ function llenarDatosTabla(datosCalculo){
 */
 function calcularTotalIngresos(datosEmpleado){
     //calcular quinquenio
-    const {porcentaje,montoQuinquenio}=quinquenio(datosEmpleado)
+    const {montoQuinquenio}=quinquenio(datosEmpleado)
     datosCalculo.sb=datosEmpleado.sm
     datosCalculo.quinquenio=montoQuinquenio
     datosCalculo.primavacacional=(datosCalculo.sb/30)*15
     datosCalculo.estimulocalidad=(datosCalculo.sb/30)*10
     datosCalculo.ajustecalendario=(datosCalculo.sb/30)*5
-    datosCalculo.totalsc=datosCalculo.sb+datosCalculo.quinquenio+datosCalculo.arteydespensa
-    datosCalculo.totalsc+=
-        (datosCalculo.primavacacional+datosCalculo.estimulocalidad+datosCalculo.ajustecalendario/12)
+    datosCalculo.totalsc=
+        (datosCalculo.sb+datosCalculo.quinquenio+datosCalculo.despensa+datosCalculo.arte)
+        +
+        (datosCalculo.primavacacional+datosCalculo.estimulocalidad+datosCalculo.ajustecalendario)/12
+
     datosCalculo.antiguedad=datosEmpleado.edadLaboral
-    
     llenarDatosTabla(datosCalculo)
     return datosCalculo
 }
@@ -228,13 +218,18 @@ const calculoG1=(datosEmpleado)=>{
     console.log("(230) datoscalculo:",datosCalculo)
     datosCalculo=calculoPrestaciones(datosCalculo)
     //edad laboral indistinta
-    document.getElementById("leyimss").innerHTML="Ley 73"
-    document.getElementById("leyimss2").innerHTML="Ley 73"
+    console.log("(221) datos calculo:", datosCalculo)
+    document.getElementById("leyimss").innerHTML="Ley 73 (G1)"
+    document.getElementById("leyimss2").innerHTML="Ley 73 (G1)"
     document.getElementById("tbl_edad_retiro").innerHTML="Indistinta"
     document.getElementById("tbl_edad_obligatoria").innerHTML="25"
     document.getElementById("tbl2_edad_obligatoria").innerHTML="15"
     document.getElementById("tbl2_edad_retiro").innerHTML="50"
-    return datosCalculo
+    const axts=15-datosCalculo.antiguedad
+    const axtc=25-datosCalculo.edad
+    document.getElementById("tbl2_diferencia").innerHTML=axts > axtc ? axts:axtc
+
+    return datosCalculo 
 }
 
 /**
@@ -244,26 +239,16 @@ const calculoG1=(datosEmpleado)=>{
 * @returns {object} calculos de simulación
 */
 const calculoG2=(datosEmpleado)=>{
-    //
-    let msg=""
-    if(datosEmpleado.edad>=65 && datosEmpleado.edadLaboral>=15){
-        msg="Jubilacion 100% retiro forzoso"
-        Swal.fire({
-                title: "Generación 2!",
-                text: msg,
-                icon: "question"
-            });
-    }else{
-        Swal.fire({
-                title: "Generación 2!",
-                text: "No cumple la edad, Calcular pensión?",
-                icon: "question"
-            });
-    }
     //calcular ingresos
     datosCalculo=calcularTotalIngresos(datosEmpleado)
-    document.getElementById("leyimss").innerHTML="Ley 97"
-    document.getElementById("leyimss2").innerHTML="Ley 97"
+    document.getElementById("leyimss").innerHTML="Ley 97 (G2)"
+    document.getElementById("leyimss2").innerHTML="Ley 97 (G2)"
+    document.getElementById("tbl_edad_retiro").innerHTML=datosCalculo.edadLaboralObligatoria
+    document.getElementById("tbl_edad_obligatoria").innerHTML=datosCalculo.edadLaboralObligatoria
+    document.getElementById("tbl2_edad_obligatoria").innerHTML=datosCalculo.edadLaboralObligatoria
+    document.getElementById("tbl2_edad_retiro").innerHTML="65"
+    
+    document.getElementById("tbl2_diferencia").innerHTML=65-Number(datosCalculo.edad)
     return datosCalculo
 }
 
