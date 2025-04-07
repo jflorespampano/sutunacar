@@ -5,56 +5,98 @@
   
   <form id="formulario" class="w3-container w3-card-4 w3-light-grey w3-padding">
     <!-- Campo Numero de empleado -->
-    <p>
-      <label for="numEmp" class="w3-text-teal"><b># empleado</b></label>
-      <input id="numEmp" class="w3-input w3-border w3-round" type="number" placeholder="Ingresa tu # de empleado" value="779" required>
-    </p>
+    <label for="numEmp" class="w3-text-teal"><b>* Num empleado</b></label>
+    <div class="w3-row">
+      <div class="w3-col s5">
+        <div style="padding-right: 20px;">
+          <input id="numEmp" name="numEmp" 
+            class="w3-input w3-border w3-round" type="number" 
+            placeholder="Ingresa tu # de empleado" required 
+          >
+        </div>
+      </div>
+      <div class="w3-col s6">
+        <div class="tooltip">
+          <button id="btnBuscaEmpleado" class="w3-button w3-teal w3-round">Buscar Datos</button>
+          <span class="tooltiptext">Carga datos si ya estan registrados</span>
+      </div>
+  
+      </div>
+    </div>
     <!-- Campo Nombre -->
     <p>
-      <label for="nombre" class="w3-text-teal"><b>Nombre</b></label>
-      <input id="nombre" class="w3-input w3-border w3-round" type="text" placeholder="Ingresa tu nombre" required value="Juan Perez lópez">
+      <label for="nombre" class="w3-text-teal"><b>* Nombre</b></label>
+      <input id="nombre" name="nombre" class="w3-input w3-border w3-round" 
+        type="text" 
+        placeholder="Ingresa tu nombre" 
+        required
+      >
     </p>
     <!-- Campo edad-->
     <p>
-      <label for="edad" class="w3-text-teal"><b>Edad</b></label>
-      <input type="number" name="" id="edad" min="18" max="75" value="40">
+      <label for="edad" class="w3-text-teal"><b>* Edad</b></label>
+      <input type="number" name="edad" 
+        id="edad" min="18" max="75"
+        required
+      >
     </p>
     <!-- Campo Correo -->
     <p>
       <label for="correo" class="w3-text-teal"><b>Correo Electrónico</b></label>
-      <input id="correo" class="w3-input w3-border w3-round" type="email" placeholder="ejemplo@correo.com" required value="mimail@correo.com">
+      <input id="correo" name="correo" 
+        class="w3-input w3-border w3-round" type="email" 
+        placeholder="ejemplo@correo.com"
+      >
     </p>
 
     <!-- Campo Teléfono -->
     <p>
       <label for="telefono" class="w3-text-teal"><b>Teléfono</b></label>
-      <input id="telefono" class="w3-input w3-border w3-round" type="tel" placeholder="Ingresa tu número de teléfono" value="938-00-00-00">
+      <input id="telefono" name="telefono" 
+        class="w3-input w3-border w3-round" type="tel" 
+        placeholder="Ingresa tu número de teléfono"
+      >
     </p>
 
     <!-- Campo NSS -->
     <p>
-      <label for="nss" class="w3-text-teal"><b>NSS</b></label>
-      <input id="nss" class="w3-input w3-border w3-round" type="text" placeholder="Ingresa tu NSS">
+      <label for="nss" class="w3-text-teal"><b>*NSS</b></label>
+      <input id="nss" name="nss" class="w3-input w3-border w3-round" 
+        type="text" placeholder="Ingresa tu NSS" 
+        required
+        style="min-width: 14ch;; max-width: 14ch;"
+      >
     </p>
 
     <!-- Campo  Plaza-->
     <p>
-      <label for="tabulador" class="w3-text-teal">Selecciona una opción:</label>
-      <select id="tabulador" name="tabulador" class="w3-input w3-border w3-round">
+      <label for="tabulador" class="w3-text-teal"><b>*Puesto</b></label>
+      <select id="tabulador" name="tabulador" 
+        class="w3-input w3-border w3-round" 
+        required
+      >
       </select>
 
     </p>
 
     <!-- Campo fecha ingreso UNACAR-->
     <p>
-      <label for="ingreso" class="w3-text-teal"><b>Fecha de ingreso UNACAR</b></label>
-      <input id="ingreso" class="w3-input w3-border w3-round" type="date" placeholder="Ingresa tu Fecha de ingreso" value="1988-02-01">
+      <label for="ingreso" class="w3-text-teal"><b>*Fecha de ingreso UNACAR</b></label>
+      <input id="ingreso" name="fechaIngreso" 
+        class="w3-input w3-border w3-round" type="date" 
+        placeholder="Ingresa tu Fecha de ingreso" value="1988-02-01"
+        required
+      >
     </p>
 
     <!-- Campo mes ingreso IMSS-->
     <p>
-      <label for="mesIngresoIMSS" class="w3-text-teal"><b>Mes de ingreso IMSS</b></label>
-      <select id="mesIngresoIMSS" name="opciones" class="w3-input w3-border w3-round">
+      <label for="mesIngresoIMSS" class="w3-text-teal"><b>*Mes de ingreso IMSS</b></label>
+      <select id="mesIngresoIMSS" name="mesIngresoIMSS" 
+        class="w3-input w3-border w3-round"
+        required
+        style="min-width: 14ch;; max-width: 14ch;"
+      >
         <option value="01">Enero</option>
         <option value="02">Febrero</option>
         <option value="03">Marzo</option>
@@ -72,14 +114,16 @@
 
     <!-- Campo dia ingreso IMSS-->
     <p>
-      <label for="diaIngresoIMSS" class="w3-text-teal"><b>Día de ingreso IMSS</b></label>
-      <input type="number" name="" id="diaIngresoIMSS" min="1" max="30" value="1">
+      <label for="diaIngresoIMSS" class="w3-text-teal"><b>*Día de ingreso IMSS</b></label>
+      <input type="number" name="diaIngresoIMSS" 
+        id="diaIngresoIMSS" min="1" max="30" value="1"
+        required
+      >
     </p>
     <!-- Botón de envío -->
     <p>
-      <button class="w3-button w3-teal w3-round">Guardar Datos</button>
+      <button id="btnGuardarDatos" class="w3-button w3-teal w3-round">Guardar Datos</button>
       <button type="submit" class="w3-button w3-blue w3-round">Calcular pensión</button>
-
     </p>
   </form>
 </div>

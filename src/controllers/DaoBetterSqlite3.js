@@ -26,7 +26,7 @@ class AppDaoBetterSQLite{
         return res
     }
     close(){
-        console.log("base de datos cerrada")
+        // console.log("base de datos cerrada")
         if(this.dbOpen) this.db.close()
     }
 }

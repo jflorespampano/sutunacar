@@ -11,12 +11,12 @@ Para calcular el dígito verificador, cada uno de los primeros 10 dígitos se mu
 
 ## matriz de pruebas
 
-| Caso      | NSS           | edad | fecha ingreso |   |
-|-----------|---------------|------|---------------|---|
-| caso 1    | 62146429101   | 40   | 01/02/2014    |   |
-| caso 2    | 62876429101   | 40   | 01/02/2014    |g2 complementaria|
-| caso 3    | 62146429101   | 66   | 01/02/2014    |   |
-| caso 4    | 62876429101   | 66   | 01/02/1987    |   |
+|numEmp  | NSS           | edad | fecha ingreso |   |
+|--------|---------------|------|---------------|---|
+| 501    | 62886429101   | 40   | 01/02/1988    |   |
+| 502    | 62886429158   | 50   | 01/02/2014    |g2 complementaria|
+| 503    | 72046429984   | 25   | 01/02/2004    |   |
+
 
 
 

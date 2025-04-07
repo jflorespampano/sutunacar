@@ -1,12 +1,17 @@
 //pagina 35 cct
+var fijos={
+    "despensa":1088.00,
+    "arte":288.84
+}
+
 var tabuladorVigente=[
-    {"clave":"d32","descripcion":"TC medio superior","sm":16807.18},
-    {"clave":"d08","descripcion":"TC asociado","sm":16122.02},
-    {"clave":"d09","descripcion":"TC asociado B","sm":18080.27},
-    {"clave":"d33","descripcion":"TC asociado C","sm":21122.96},
-    {"clave":"d34","descripcion":"TC titular A","sm":24411.88},
-    {"clave":"d35","descripcion":"TC titular B","sm":28896.31},
-    {"clave":"d36","descripcion":"TC titular C","sm":33878.04},
+    {"clave":"d32","descripcion":"PTC medio superior","sm":16807.18},
+    {"clave":"d08","descripcion":"PTC asociado","sm":16122.02},
+    {"clave":"d09","descripcion":"PTC asociado B","sm":18080.27},
+    {"clave":"d33","descripcion":"PTC asociado C","sm":21122.96},
+    {"clave":"d34","descripcion":"PTC titular A","sm":29217.92},
+    {"clave":"d35","descripcion":"PTC titular B","sm":28896.31},
+    {"clave":"d36","descripcion":"PTC titular C","sm":33878.04},
     {"clave":"d37","descripcion":"HSM NMSA","sm":249.03},
     {"clave":"d38","descripcion":"HSM NMSB","sm":285.99},
     {"clave":"d39","descripcion":"HSM NMSC","sm":329.36},
@@ -62,10 +67,73 @@ let datosCalculo={
     "totalsc":0,
     "edad":0,
     "antiguedad":0,
-    "ley":73,
+    "ley":0,
     "puesto":"sn",
     "edadLaboralObligatoria":25,
-    "diferencia":0
+    "diferencia":0,
+    prepararDatosCalculo(datosEmpleado){
+        this.edad=datosEmpleado.edad
+        this.antiguedad=datosEmpleado.edadLaboral
+        this.ley=datosEmpleado.modalidad
+        this.puesto=datosEmpleado.plaza
+        this.edadLaboralObligatoria=(datosEmpleado.modalidad == "73") ? 25 : 30
+        this.diferencia =  datosCalculo.edadLaboralObligatoria - datosCalculo.antiguedad
+        this.antiguedad=datosEmpleado.edadLaboral
+    },
+    gratificacionJubilacion:function(){
+        //=(sb+quinquenio)*0.06
+        // console.log("(84){sb,quinquenio}",this.sb,this.quinquenio)
+        return (this.sb+this.quinquenio)*0.06
+    },
+    aguinaldo:function(){
+        return this.sb
+    },
+    sbNosotros:function(sm){
+        this.sb=sm
+        const {montoQuinquenio}=quinquenio(datosEmpleado)
+        this.quinquenio=montoQuinquenio
+        this.despensa=fijos.despensa
+        this.arte=fijos.arte
+        this.primavacacional=0
+        this.estimulocalidad=0
+        this.ajustecalendario=0
+        this.totalsc=
+            (this.sb+this.quinquenio+this.despensa+this.arte)
+        return this.totalsc
+
+    },
+    sbActual:function(sm){
+        this.sb=sm
+        const {montoQuinquenio}=quinquenio(datosEmpleado)
+        this.quinquenio=montoQuinquenio
+        this.despensa=fijos.despensa
+        this.arte=fijos.arte
+        this.primavacacional=(datosCalculo.sb/30)*15
+        this.estimulocalidad=(datosCalculo.sb/30)*10
+        this.ajustecalendario=(datosCalculo.sb/30)*5
+        this.totalsc=
+            (this.sb+this.quinquenio+this.despensa+this.arte)
+            +
+            (this.primavacacional+this.estimulocalidad+this.ajustecalendario)/12
+        return this.totalsc
+    },
+    sbG1:function(sm){
+        //=SUMA(sb+quinquenio+despensa+arte)+(primaVac+esimulo caliad+ajuste calendario+aguinaldo)/12
+        this.sb=sm
+        const {montoQuinquenio}=quinquenio(datosEmpleado)
+        this.quinquenio=montoQuinquenio
+        this.despensa=fijos.despensa
+        this.arte=fijos.arte
+        this.primavacacional=(datosCalculo.sb/30)*15
+        this.estimulocalidad=(datosCalculo.sb/30)*10
+        this.ajustecalendario=(datosCalculo.sb/30)*5
+        this.totalsc=
+            (this.sb+this.quinquenio+this.despensa+this.arte)
+            +
+            (this.primavacacional+this.estimulocalidad+this.ajustecalendario+this.aguinaldo)/12
+        //
+        return this.totalsc
+    }
 
 }
 
@@ -141,45 +209,63 @@ function llenarDatosTabla(datosCalculo){
     const primera_letra = registro.clave[0]
     const categoria = primera_letra == 'A' ? "ADMINISTRATIVO" : "ACADEMICO"
     document.querySelector("#tbl_categoria").innerHTML=categoria
-    document.querySelector("#tbl_sb").innerHTML=datosCalculo.sb.toLocaleString('en-US')
-
-    document.querySelector("#tbl_quinquenio").innerHTML=formateaNumero(datosCalculo.quinquenio)
-    document.querySelector("#tbl_despensa").innerHTML=formateaNumero(datosCalculo.despensa)
-    document.querySelector("#tbl_arte").innerHTML=formateaNumero(datosCalculo.arte)
-    document.querySelector("#tbl_primaVacacional").innerHTML=formateaNumero(datosCalculo.primavacacional)
-    document.querySelector("#tbl_estimulocalidad").innerHTML=formateaNumero(datosCalculo.estimulocalidad)
-    document.querySelector("#tbl_ajustecalendario").innerHTML=formateaNumero(datosCalculo.ajustecalendario)
-    document.querySelector("#tbl_totalsc").innerHTML=formateaNumero(datosCalculo.totalsc)
-
     document.querySelector("#tbl_antiguedad").innerHTML=datosCalculo.antiguedad
     document.querySelector("#tbl_edad").innerHTML=datosCalculo.edad
     document.querySelector("#tbl_diferencia").innerHTML=datosCalculo.diferencia
     document.querySelector("#tbl_edad_obligatoria").innerHTML=datosCalculo.edadLaboralObligatoria
-
     return true
 }
 
+function llenarTablaSBActual(datosCalculo,totalsc){
+    document.querySelector("#tbl_sbA").innerHTML=datosCalculo.sb.toLocaleString('en-US')
+    document.querySelector("#tbl_quinquenioA").innerHTML=formateaNumero(datosCalculo.quinquenio)
+    document.querySelector("#tbl_despensaA").innerHTML=formateaNumero(datosCalculo.despensa)
+    document.querySelector("#tbl_arteA").innerHTML=formateaNumero(datosCalculo.arte)
+    document.querySelector("#tbl_primaVacacionalA").innerHTML=formateaNumero(datosCalculo.primavacacional)
+    document.querySelector("#tbl_estimulocalidadA").innerHTML=formateaNumero(datosCalculo.estimulocalidad)
+    document.querySelector("#tbl_ajustecalendarioA").innerHTML=formateaNumero(datosCalculo.ajustecalendario)
+    document.querySelector("#tbl_totalscA").innerHTML=formateaNumero(totalsc)
+}
+
+function llenarTablaSBNosotros(datosCalculo,totalsc){
+    document.querySelector("#tbl_sbN").innerHTML=datosCalculo.sb.toLocaleString('en-US')
+    document.querySelector("#tbl_quinquenioN").innerHTML=formateaNumero(datosCalculo.quinquenio)
+    document.querySelector("#tbl_despensaN").innerHTML=formateaNumero(datosCalculo.despensa)
+    document.querySelector("#tbl_arteN").innerHTML=formateaNumero(datosCalculo.arte)
+    document.querySelector("#tbl_primaVacacionalN").innerHTML=formateaNumero(datosCalculo.primavacacional)
+    document.querySelector("#tbl_estimulocalidadN").innerHTML=formateaNumero(datosCalculo.estimulocalidad)
+    document.querySelector("#tbl_ajustecalendarioN").innerHTML=formateaNumero(datosCalculo.ajustecalendario)
+    document.querySelector("#tbl_gratificacionJubilacionN").innerHTML=formateaNumero(datosCalculo.gratificacionJubilacion())
+    document.querySelector("#tbl_totalscN").innerHTML=formateaNumero(totalsc)
+}
+
+function llenarTablaSBG1(datosCalculo,totalsc){
+    document.querySelector("#tbl_sbG").innerHTML=datosCalculo.sb.toLocaleString('en-US')
+    document.querySelector("#tbl_quinquenioG").innerHTML=formateaNumero(datosCalculo.quinquenio)
+    document.querySelector("#tbl_despensaN").innerHTML=formateaNumero(datosCalculo.despensa)
+    document.querySelector("#tbl_arteN").innerHTML=formateaNumero(datosCalculo.arte)
+    document.querySelector("#tbl_primaVacacionalG").innerHTML=formateaNumero(datosCalculo.primavacacional)
+    document.querySelector("#tbl_estimulocalidadG").innerHTML=formateaNumero(datosCalculo.estimulocalidad)
+    document.querySelector("#tbl_ajustecalendarioG").innerHTML=formateaNumero(datosCalculo.ajustecalendario)
+    document.querySelector("#tbl_aguinaldoG").innerHTML=formateaNumero(datosCalculo.aguinaldo())
+    document.querySelector("#tbl_totalscG").innerHTML=formateaNumero(totalsc)
+    document.getElementById("generacion").innerHTML="G("+datosEmpleado.generacion+")"
+}
+
+
 /**
-* Calcula el total de ingresos quinquenio+ salario + arte
-* Generación 2 contratados despues de 18/09/2003
+* Calcula el total de ingresos 
+* 
 * @param {object} datosEmpleado
 * @returns {object} calculos de simulación
 */
 function calcularTotalIngresos(datosEmpleado){
-    //calcular quinquenio
-    const {montoQuinquenio}=quinquenio(datosEmpleado)
-    datosCalculo.sb=datosEmpleado.sm
-    datosCalculo.quinquenio=montoQuinquenio
-    datosCalculo.primavacacional=(datosCalculo.sb/30)*15
-    datosCalculo.estimulocalidad=(datosCalculo.sb/30)*10
-    datosCalculo.ajustecalendario=(datosCalculo.sb/30)*5
-    datosCalculo.totalsc=
-        (datosCalculo.sb+datosCalculo.quinquenio+datosCalculo.despensa+datosCalculo.arte)
-        +
-        (datosCalculo.primavacacional+datosCalculo.estimulocalidad+datosCalculo.ajustecalendario)/12
-
-    datosCalculo.antiguedad=datosEmpleado.edadLaboral
     llenarDatosTabla(datosCalculo)
+    let totalsc=datosCalculo.sbNosotros(datosEmpleado.sm)
+    llenarTablaSBNosotros(datosCalculo,totalsc)
+    totalsc=datosCalculo.sbActual(datosEmpleado.sm)
+    llenarTablaSBActual(datosCalculo,totalsc)
+    llenarTablaSBG1(datosCalculo,totalsc)
     return datosCalculo
 }
 
@@ -192,19 +278,14 @@ function limpiaTablas(){
     document.getElementById("tbl2_edad_retiro").innerHTML=""
 }
 
-function calculoPrestaciones(datosCalculo){
-    
-    
-    return datosCalculo
-}
-
 /**
-* Calcula los datos de simulaacion de la generación 1.
+* Calcula los datos de simulacion
 * Generación 1 contratados antes de 18/09/2013
+* Generacion 2 despues de 18/09/2013
 * @param {object} datosEmpleado
 * @returns {object} calculos de simulación
 */
-const calculoG1=(datosEmpleado)=>{
+const calculoSimulacion=(datosEmpleado)=>{
     if(datosEmpleado.edadLaboral>=25 && datosEmpleado.edad>=50){
         Swal.fire({
             title: "Generación 1!",
@@ -212,15 +293,13 @@ const calculoG1=(datosEmpleado)=>{
             icon: "success"
         });
         limpiaTablas()
-        return null
+        return false
     }
     let datosCalculo=calcularTotalIngresos(datosEmpleado)
-    console.log("(230) datoscalculo:",datosCalculo)
-    datosCalculo=calculoPrestaciones(datosCalculo)
-    //edad laboral indistinta
-    console.log("(221) datos calculo:", datosCalculo)
-    document.getElementById("leyimss").innerHTML="Ley 73 (G1)"
-    document.getElementById("leyimss2").innerHTML="Ley 73 (G1)"
+    console.log("calculoSimulacion(299) datoscalculo:",datosCalculo)
+
+    document.getElementById("leyimss").innerHTML="Ley 73 G("+datosEmpleado.generacion+")"
+    document.getElementById("leyimss2").innerHTML="Ley 73 G("+datosEmpleado.generacion+")"
     document.getElementById("tbl_edad_retiro").innerHTML="Indistinta"
     document.getElementById("tbl_edad_obligatoria").innerHTML="25"
     document.getElementById("tbl2_edad_obligatoria").innerHTML="15"
@@ -229,27 +308,7 @@ const calculoG1=(datosEmpleado)=>{
     const axtc=25-datosCalculo.edad
     document.getElementById("tbl2_diferencia").innerHTML=axts > axtc ? axts:axtc
 
-    return datosCalculo 
-}
-
-/**
-* Calcula los datos de simulaacion de la generación 2.
-* Generación 2 contratados despues de 18/09/2003
-* @param {object} datosEmpleado
-* @returns {object} calculos de simulación
-*/
-const calculoG2=(datosEmpleado)=>{
-    //calcular ingresos
-    datosCalculo=calcularTotalIngresos(datosEmpleado)
-    document.getElementById("leyimss").innerHTML="Ley 97 (G2)"
-    document.getElementById("leyimss2").innerHTML="Ley 97 (G2)"
-    document.getElementById("tbl_edad_retiro").innerHTML=datosCalculo.edadLaboralObligatoria
-    document.getElementById("tbl_edad_obligatoria").innerHTML=datosCalculo.edadLaboralObligatoria
-    document.getElementById("tbl2_edad_obligatoria").innerHTML=datosCalculo.edadLaboralObligatoria
-    document.getElementById("tbl2_edad_retiro").innerHTML="65"
-    
-    document.getElementById("tbl2_diferencia").innerHTML=65-Number(datosCalculo.edad)
-    return datosCalculo
+    return true 
 }
 
 /**
@@ -281,9 +340,13 @@ function verificaCampos(){
         return false
     }
     //document.getElementById("mensaje-error").style.display = "block"; // Mostrar mensaje de error
-
+    let dato=document.querySelector("#correo").value.trim()
+    if(dato==="") document.querySelector("#correo").value="sd"
+    dato=document.querySelector("#telefono").value.trim()
+    if(dato==="") document.querySelector("#telefono").value="sd"
     return true
 }
+
 /**
 * Obtener datos del formulario.
 * @returns {object} datosEmpleado/null si datos incorrectos
@@ -324,32 +387,118 @@ function obtenerSm(puesto){
     return datoBuscado.sm
 }
 
+/**
+ * Busca empleado en la base, si lo encuentra carga sus datos en el formulario
+ */
+document.getElementById("btnBuscaEmpleado").addEventListener("click", function(event) {
+    event.preventDefault()
+    const numEmp=document.querySelector("#numEmp").value.trim()
+    
+    if (numEmp === "") {
+        console.log("El campo de texto está vacío.");
+        return false
+    }
+    //buscar dato en la bd
+    fetch(`/get/${numEmp}`)
+    .then(data=>{
+        // console.log("resp==>",data)
+        if(!data.ok) return Promise.reject("Respuesta falliad del servidor")
+        return data.json()
+    })
+    .then(data=>{
+        // console.log("respuesta json:",data)
+        if(data.success){
+            // console.log("recibi al buscar:",data.data)
+            const datos=data.data
+            //cargar datos en formulario
+            document.querySelector("#nombre").value=datos.nombre
+            document.querySelector("#edad").value=datos.edad
+            document.querySelector("#correo").value=datos.correo
+            document.querySelector("#telefono").value=datos.telefono
+            document.querySelector("#nss").value=datos.nss
+            
+            let option=datos.puesto
+            let select = document.getElementById("tabulador");
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === option) {
+                    select.options[i].selected = true;
+                    break;
+                }
+            }
+            document.querySelector("#ingreso").value=datos.fecha_ingreso_unacar
+            option=datos.mes_ingreso_imss
+            select = document.getElementById("mesIngresoIMSS");
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === option) {
+                    select.options[i].selected = true;
+                    break;
+                }
+            }
+            document.querySelector("#diaIngresoIMSS").value=datos.dia_ingreso_imss
+            const input = document.getElementById('numEmp');
+            input.style.backgroundColor = 'lightgreen';
+            // Swal.fire("Datos cargados");
+        }else{
+            Swal.fire("No esta, favor de cargar datos");
+            const input = document.getElementById('numEmp');
+            input.style.backgroundColor = '#FFC0CB';
+        }
+    })
+    .catch(resp=>{
+        Swal.fire(resp);
+    })
+})
+
+/**
+ * Guarda datos del empleado en la base
+ */
+document.getElementById("btnGuardarDatos").addEventListener("click", function(event) {
+    event.preventDefault()
+    if(!verificaCampos()){
+        Swal.fire(data.message)
+        return false
+    }
+    const f=document.querySelector("#formulario")
+    const df=new FormData(f)
+    const fjson=Object.fromEntries(df)
+    // console.log("(397) formulario:",fjson)
+    fetch('/add',{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(fjson)
+    })
+    .then(data=>{
+        if(!data.ok) return Promise.reject("Respuesta falliad del servidor")
+        return data.json()
+    })
+    .then(data=>{
+        // console.log("respuesta serv:",data)
+        if(data.success){
+            Swal.fire(data.message);
+        }else{
+            Swal.fire("no success");
+        }
+    })
+    .catch(resp=>{
+        Swal.fire(resp);
+    })
+})
+
+/**
+ * Prepara datos y calcula simulación
+ */
 document.getElementById("formulario").addEventListener("submit", function(event) {
     event.preventDefault()
     let datosEmpleado=obtenerDatosDeFormulario()
     if(datosEmpleado == null) return false
-    console.log("(356) datos empleado:",datosEmpleado)
-    const plaza=datosEmpleado.plaza
-    datosEmpleado.sm=obtenerSm(plaza) //obtener el salario mensual base
+    console.log("(513) datos empleado:",datosEmpleado)
+    datosEmpleado.sm=obtenerSm(datosEmpleado.plaza) //obtener el salario mensual base
     //preparar datos para el calculo
-    datosCalculo.edad=datosEmpleado.edad
-    datosCalculo.antiguedad=datosEmpleado.edadLaboral
-    datosCalculo.ley=datosEmpleado.modalidad
-    datosCalculo.puesto=datosEmpleado.plaza
-    datosCalculo.edadLaboralObligatoria=(datosEmpleado.modalidad == "73") ? 25 : 30
-    datosCalculo.diferencia =  datosCalculo.edadLaboralObligatoria - datosCalculo.antiguedad
-
-    let resp
-    if(datosEmpleado.generacion==1){
-        resp=calculoG1(datosEmpleado)
-        if(resp==null) return
-        // console.log("Datos del calculo:", JSON.stringify(resp))
-    }else{
-        resp=calculoG2(datosEmpleado)
-        if(resp==null) return
-        // console.log("Datos del calculo:", JSON.stringify(resp))
-    }
-    return true
+    datosCalculo.prepararDatosCalculo(datosEmpleado)
+    const resp=calculoSimulacion(datosEmpleado)
+    return resp
 })
 
 /**

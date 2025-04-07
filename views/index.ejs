@@ -5,23 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculo jubilacion</title>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    
+    <style>
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 150%; /* Posición del tooltip */
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+    </style>
 </head>
 <body>
-    <div class="w3-container w3-teal w3-padding-16">
-        <!-- Logo -->
-        <img src="images/sutunacar.png" alt="Logo" class="w3-left w3-margin-right" style="width:100px;">
-      
-        <!-- Título -->
-        <h2 class="w3-center">Simulador de pension SUTUNACAR 2025</h2>
-        <h3 class="w3-center">Simulación basada en los datos disponibles, Los resultados no son vinculantes</h3>
-    </div>
-       
+    <!-- Encabezado -->
+    <%- include('pages/header.ejs') %>
+    <!-- cuerpo de la página -->
     <div id="app" class="w3-container w3-row w3-padding">
         <div id="div_form" class="w3-card w3-col l4 w3-padding-16">
             <%- include('pages/altaEmpleado.ejs') %>
         </div>
-        <div id="div_form" class="w3-card w3-col l4 w3-padding-16">
+        <div id="div_form" class="w3-card w3-col l8 w3-padding-16">
             <%- include('pages/tablaCalculos.ejs') %>
         </div>
     </div>
