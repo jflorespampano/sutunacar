@@ -1,7 +1,7 @@
 //pagina 35 cct
 var fijos={
     "despensa":1088.00,
-    "arte":288.84
+    "arte":233.84
 }
 
 var tabuladorVigente=[
@@ -89,6 +89,7 @@ let datosCalculo={
         return this.sb
     },
     sbNosotros:function(sm){
+        //SUMA(sb+quinquenio+despensa+arte)+(primaV+estimuloCalidad+ajusteCal)/12+gratXjuvilacion
         this.sb=sm
         const {montoQuinquenio}=quinquenio(datosEmpleado)
         this.quinquenio=montoQuinquenio
@@ -99,10 +100,14 @@ let datosCalculo={
         this.ajustecalendario=0
         this.totalsc=
             (this.sb+this.quinquenio+this.despensa+this.arte)
+            +
+            (this.primavacacional+this.estimulocalidad+this.ajustecalendario)/12
+            +this.gratificacionJubilacion()
         return this.totalsc
 
     },
     sbActual:function(sm){
+        //SUMA(sb+quinquenio+despensa+arte)+(primaV+estimuloCalidad+ajusteCal)/12+gratXjuvilacion
         this.sb=sm
         const {montoQuinquenio}=quinquenio(datosEmpleado)
         this.quinquenio=montoQuinquenio
@@ -112,13 +117,14 @@ let datosCalculo={
         this.estimulocalidad=(datosCalculo.sb/30)*10
         this.ajustecalendario=(datosCalculo.sb/30)*5
         this.totalsc=
-            (this.sb+this.quinquenio+this.despensa+this.arte)
-            +
-            (this.primavacacional+this.estimulocalidad+this.ajustecalendario)/12
+        (this.sb+this.quinquenio+this.despensa+this.arte)
+        +
+        (this.primavacacional+this.estimulocalidad+this.ajustecalendario)/12
+        + 0
         return this.totalsc
     },
     sbG1:function(sm){
-        //=SUMA(sb+quinquenio+despensa+arte)+(primaVac+esimulo caliad+ajuste calendario+aguinaldo)/12
+        //SUMA(sb+quinquenio+despensa+arte)+(primaV+estimuloCalidad+ajusteCal+aguinaldo)/12
         this.sb=sm
         const {montoQuinquenio}=quinquenio(datosEmpleado)
         this.quinquenio=montoQuinquenio
@@ -130,9 +136,29 @@ let datosCalculo={
         this.totalsc=
             (this.sb+this.quinquenio+this.despensa+this.arte)
             +
-            (this.primavacacional+this.estimulocalidad+this.ajustecalendario+this.aguinaldo)/12
+            (this.primavacacional+this.estimulocalidad+this.ajustecalendario+this.aguinaldo())/12
         //
         return this.totalsc
+    },
+    sbG2:function(sm){
+        //SUMA(sb+quinquenio+despensa+arte)+(primaV+estimuloCalidad+ajusteCal+aguinaldo)/12
+        this.sb=sm
+        const {montoQuinquenio}=quinquenio(datosEmpleado)
+        this.quinquenio=montoQuinquenio
+        this.despensa=fijos.despensa
+        this.arte=fijos.arte
+        this.primavacacional=(datosCalculo.sb/30)*15
+        this.estimulocalidad=(datosCalculo.sb/30)*10
+        this.ajustecalendario=(datosCalculo.sb/30)*5
+        this.totalsc=
+            (this.sb+this.quinquenio+this.despensa+this.arte)
+            +
+            (this.primavacacional+this.estimulocalidad+this.ajustecalendario+this.aguinaldo())/12
+        //
+        return this.totalsc
+    },
+    aguinaldoJubilado:function(dias){
+        return (this.sbNosotros(datosEmpleado.sm)/30)*dias
     }
 
 }
@@ -242,8 +268,8 @@ function llenarTablaSBNosotros(datosCalculo,totalsc){
 function llenarTablaSBG1(datosCalculo,totalsc){
     document.querySelector("#tbl_sbG").innerHTML=datosCalculo.sb.toLocaleString('en-US')
     document.querySelector("#tbl_quinquenioG").innerHTML=formateaNumero(datosCalculo.quinquenio)
-    document.querySelector("#tbl_despensaN").innerHTML=formateaNumero(datosCalculo.despensa)
-    document.querySelector("#tbl_arteN").innerHTML=formateaNumero(datosCalculo.arte)
+    document.querySelector("#tbl_despensaG").innerHTML=formateaNumero(datosCalculo.despensa)
+    document.querySelector("#tbl_arteG").innerHTML=formateaNumero(datosCalculo.arte)
     document.querySelector("#tbl_primaVacacionalG").innerHTML=formateaNumero(datosCalculo.primavacacional)
     document.querySelector("#tbl_estimulocalidadG").innerHTML=formateaNumero(datosCalculo.estimulocalidad)
     document.querySelector("#tbl_ajustecalendarioG").innerHTML=formateaNumero(datosCalculo.ajustecalendario)
@@ -265,17 +291,62 @@ function calcularTotalIngresos(datosEmpleado){
     llenarTablaSBNosotros(datosCalculo,totalsc)
     totalsc=datosCalculo.sbActual(datosEmpleado.sm)
     llenarTablaSBActual(datosCalculo,totalsc)
+    totalsc=datosCalculo.sbG1(datosEmpleado.sm)
     llenarTablaSBG1(datosCalculo,totalsc)
+
+    //llenar datos aguinaldo de jubilacion
+    let x=formateaNumero(datosCalculo.aguinaldoJubilado(40))
+    document.getElementById("Aguinaldo_jubilado_actual").innerHTML=x
+    x=formateaNumero(datosCalculo.aguinaldoJubilado(30))
+    document.getElementById("Aguinaldo_jubilado_reforma").innerHTML=x
     return datosCalculo
 }
 
 function limpiaTablas(){
+    document.getElementById("tbl_puesto").innerHTML=""
+    document.getElementById("tbl_categoria").innerHTML=""
+    document.getElementById("tbl_antiguedad").innerHTML=""
+    document.getElementById("tbl_edad").innerHTML=""
+    document.getElementById("tbl_diferencia").innerHTML=""
     document.getElementById("leyimss").innerHTML=""
     document.getElementById("leyimss2").innerHTML=""
     document.getElementById("tbl_edad_retiro").innerHTML=""
     document.getElementById("tbl_edad_obligatoria").innerHTML=""
     document.getElementById("tbl2_edad_obligatoria").innerHTML=""
     document.getElementById("tbl2_edad_retiro").innerHTML=""
+
+    document.querySelector("#tbl_sbA").innerHTML=""
+    document.querySelector("#tbl_quinquenioA").innerHTML=""
+    document.querySelector("#tbl_despensaA").innerHTML=""
+    document.querySelector("#tbl_arteA").innerHTML=""
+    document.querySelector("#tbl_primaVacacionalA").innerHTML=""
+    document.querySelector("#tbl_estimulocalidadA").innerHTML=""
+    document.querySelector("#tbl_ajustecalendarioA").innerHTML=""
+    document.querySelector("#tbl_gratificacionJubilacionA").innerHTML=""
+    document.querySelector("#tbl_aguinaldoA").innerHTML=""
+    document.querySelector("#tbl_totalscA").innerHTML=""
+
+    document.querySelector("#tbl_sbN").innerHTML=""
+    document.querySelector("#tbl_quinquenioN").innerHTML=""
+    document.querySelector("#tbl_despensaN").innerHTML=""
+    document.querySelector("#tbl_arteN").innerHTML=""
+    document.querySelector("#tbl_primaVacacionalN").innerHTML=""
+    document.querySelector("#tbl_estimulocalidadN").innerHTML=""
+    document.querySelector("#tbl_ajustecalendarioN").innerHTML=""
+    document.querySelector("#tbl_gratificacionJubilacionN").innerHTML=""
+    document.querySelector("#tbl_aguinaldoN").innerHTML=""
+    document.querySelector("#tbl_totalscN").innerHTML=""
+
+    document.querySelector("#tbl_sbG").innerHTML=""
+    document.querySelector("#tbl_quinquenioG").innerHTML=""
+    document.querySelector("#tbl_despensaG").innerHTML=""
+    document.querySelector("#tbl_arteG").innerHTML=""
+    document.querySelector("#tbl_primaVacacionalG").innerHTML=""
+    document.querySelector("#tbl_estimulocalidadG").innerHTML=""
+    document.querySelector("#tbl_ajustecalendarioG").innerHTML=""
+    document.querySelector("#tbl_gratificacionJubilacionG").innerHTML=""
+    document.querySelector("#tbl_aguinaldoG").innerHTML=""
+    document.querySelector("#tbl_totalscG").innerHTML=""
 }
 
 /**
@@ -484,6 +555,16 @@ document.getElementById("btnGuardarDatos").addEventListener("click", function(ev
     .catch(resp=>{
         Swal.fire(resp);
     })
+})
+
+document.getElementById("menu_ayuda").addEventListener("click", function(event) {
+    event.preventDefault()
+    Swal.fire({
+        imageUrl: "images/imagenSindicato1.jpg",
+        imageHeight: 300,
+        imageWidth: 350,
+        imageAlt: "Ayuda"
+    });
 })
 
 /**
