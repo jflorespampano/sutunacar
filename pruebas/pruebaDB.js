@@ -1,6 +1,6 @@
 //usar Dao
-import AppDaoBetterSQLite from './src/controllers/DaoBetterSqlite3.js'
-import ModelSocio from "./src/models/model.empleados.js";
+import AppDaoBetterSQLite from '../src/controllers/DaoBetterSqlite3.js'
+import ModelSocio from "../src/models/model.empleados.js";
 
 const controllerDB=new AppDaoBetterSQLite('socios.sqlite')
 const mc=new ModelSocio(controllerDB)

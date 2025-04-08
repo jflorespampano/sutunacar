@@ -280,18 +280,18 @@ function llenarTablaSBG1(datosCalculo,totalsc){
 
 
 /**
-* Calcula el total de ingresos 
+* Mostrar datos en las tablas de interfaz 
 * 
-* @param {object} datosEmpleado
+* @param {number} sm salario mensual
 * @returns {object} calculos de simulación
 */
-function calcularTotalIngresos(datosEmpleado){
+function mostrarDatosEnTablas(sm){
     llenarDatosTabla(datosCalculo)
-    let totalsc=datosCalculo.sbNosotros(datosEmpleado.sm)
+    let totalsc=datosCalculo.sbNosotros(sm)
     llenarTablaSBNosotros(datosCalculo,totalsc)
-    totalsc=datosCalculo.sbActual(datosEmpleado.sm)
+    totalsc=datosCalculo.sbActual(sm)
     llenarTablaSBActual(datosCalculo,totalsc)
-    totalsc=datosCalculo.sbG1(datosEmpleado.sm)
+    totalsc=datosCalculo.sbG1(sm)
     llenarTablaSBG1(datosCalculo,totalsc)
 
     //llenar datos aguinaldo de jubilacion
@@ -299,7 +299,7 @@ function calcularTotalIngresos(datosEmpleado){
     document.getElementById("Aguinaldo_jubilado_actual").innerHTML=x
     x=formateaNumero(datosCalculo.aguinaldoJubilado(30))
     document.getElementById("Aguinaldo_jubilado_reforma").innerHTML=x
-    return datosCalculo
+    return true
 }
 
 function limpiaTablas(){
@@ -349,6 +349,19 @@ function limpiaTablas(){
     document.querySelector("#tbl_totalscG").innerHTML=""
 }
 
+function mostrarDatosGenerales(){
+    //mostrar datos generales
+    document.getElementById("leyimss").innerHTML="Ley 73 G("+datosEmpleado.generacion+")"
+    document.getElementById("leyimss2").innerHTML="Ley 73 G("+datosEmpleado.generacion+")"
+    document.getElementById("tbl_edad_retiro").innerHTML="Indistinta"
+    document.getElementById("tbl_edad_obligatoria").innerHTML="25"
+    document.getElementById("tbl2_edad_obligatoria").innerHTML="15"
+    document.getElementById("tbl2_edad_retiro").innerHTML="50"
+    const axts=15-datosCalculo.antiguedad
+    const axtc=25-datosCalculo.edad
+    document.getElementById("tbl2_diferencia").innerHTML=axts > axtc ? axts:axtc
+}
+
 /**
 * Calcula los datos de simulacion
 * Generación 1 contratados antes de 18/09/2013
@@ -366,19 +379,10 @@ const calculoSimulacion=(datosEmpleado)=>{
         limpiaTablas()
         return false
     }
-    let datosCalculo=calcularTotalIngresos(datosEmpleado)
-    console.log("calculoSimulacion(299) datoscalculo:",datosCalculo)
+    mostrarDatosEnTablas(datosEmpleado.sm)
+    console.log("(383) datoscalculo:",datosCalculo)
 
-    document.getElementById("leyimss").innerHTML="Ley 73 G("+datosEmpleado.generacion+")"
-    document.getElementById("leyimss2").innerHTML="Ley 73 G("+datosEmpleado.generacion+")"
-    document.getElementById("tbl_edad_retiro").innerHTML="Indistinta"
-    document.getElementById("tbl_edad_obligatoria").innerHTML="25"
-    document.getElementById("tbl2_edad_obligatoria").innerHTML="15"
-    document.getElementById("tbl2_edad_retiro").innerHTML="50"
-    const axts=15-datosCalculo.antiguedad
-    const axtc=25-datosCalculo.edad
-    document.getElementById("tbl2_diferencia").innerHTML=axts > axtc ? axts:axtc
-
+    mostrarDatosGenerales()
     return true 
 }
 
@@ -470,17 +474,17 @@ document.getElementById("btnBuscaEmpleado").addEventListener("click", function(e
         return false
     }
     //buscar dato en la bd
-    fetch(`/get/${numEmp}`)
+    fetch(`socios/one/${numEmp}`)
     .then(data=>{
         // console.log("resp==>",data)
         if(!data.ok) return Promise.reject("Respuesta falliad del servidor")
         return data.json()
     })
     .then(data=>{
-        // console.log("respuesta json:",data)
-        if(data.success){
-            // console.log("recibi al buscar:",data.data)
-            const datos=data.data
+        // console.log("**respuesta json:",data.data)
+        if(data.success && data.data.length>0){
+            // console.log("recibi al buscar:",data)
+            const datos=data.data[0]
             //cargar datos en formulario
             document.querySelector("#nombre").value=datos.nombre
             document.querySelector("#edad").value=datos.edad
@@ -533,7 +537,7 @@ document.getElementById("btnGuardarDatos").addEventListener("click", function(ev
     const df=new FormData(f)
     const fjson=Object.fromEntries(df)
     // console.log("(397) formulario:",fjson)
-    fetch('/add',{
+    fetch('socios/add',{
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -574,7 +578,7 @@ document.getElementById("formulario").addEventListener("submit", function(event)
     event.preventDefault()
     let datosEmpleado=obtenerDatosDeFormulario()
     if(datosEmpleado == null) return false
-    console.log("(513) datos empleado:",datosEmpleado)
+    console.log("(581) datos empleado:",datosEmpleado)
     datosEmpleado.sm=obtenerSm(datosEmpleado.plaza) //obtener el salario mensual base
     //preparar datos para el calculo
     datosCalculo.prepararDatosCalculo(datosEmpleado)
