@@ -1,9 +1,12 @@
-//pagina 35 cct
+// const URLsocios="http://localhost:3000/socios"
+const URLsocios="socios"
+
 var fijos={
     "despensa":1088.00,
     "arte":233.84
 }
 
+//pagina 35 cct
 var tabuladorVigente=[
     {"clave":"d32","descripcion":"PTC medio superior","sm":16807.18},
     {"clave":"d08","descripcion":"PTC asociado","sm":16122.02},
@@ -15,7 +18,7 @@ var tabuladorVigente=[
     {"clave":"d37","descripcion":"HSM NMSA","sm":249.03},
     {"clave":"d38","descripcion":"HSM NMSB","sm":285.99},
     {"clave":"d39","descripcion":"HSM NMSC","sm":329.36},
-    {"clave":"d40","descripcion":"HSM NSA","sm":412.02},
+    {"clave":"d40","descripcion":"HSM NSA","sm":9118.76},
     {"clave":"d41","descripcion":"HSM NSB","sm":468.56},
     {"clave":"d42","descripcion":"HSM NSC","sm":498.47},
     {"clave":"d43","descripcion":"INSTRUCTOR NA-D01","sm":235.84},
@@ -351,14 +354,32 @@ function limpiaTablas(){
 
 function mostrarDatosGenerales(){
     //mostrar datos generales
-    document.getElementById("leyimss").innerHTML="Ley 73 G("+datosEmpleado.generacion+")"
-    document.getElementById("leyimss2").innerHTML="Ley 73 G("+datosEmpleado.generacion+")"
-    document.getElementById("tbl_edad_retiro").innerHTML="Indistinta"
-    document.getElementById("tbl_edad_obligatoria").innerHTML="25"
-    document.getElementById("tbl2_edad_obligatoria").innerHTML="15"
+    
+    let axts, axtc, edadCronologicaRetiro, edadLaboralObligatoria, diferencia
+    const leyImss=calcularModalidad(new Date(datosEmpleado.fechaAltaImss))
+    if(leyImss===97){
+        axts=30-datosCalculo.antiguedad
+        axtc=65-datosCalculo.edad
+        edadCronologicaRetiro=65
+        edadLaboralObligatoria=30
+        if(axtc===0){
+            diferencia=0
+        }else{
+            diferencia=axts > axtc ? axts:axtc
+        }
+    }else{
+        axts=15-datosCalculo.antiguedad
+        axtc=25-datosCalculo.edad
+        edadCronologicaRetiro="Indistinta"
+        edadLaboralObligatoria=25
+    }
+    document.getElementById("leyimss").innerHTML="Ley "+leyImss+" G("+datosEmpleado.generacion+")"
+    document.getElementById("leyimss2").innerHTML="Ley "+leyImss+" G("+datosEmpleado.generacion+")"
+    document.getElementById("tbl_edad_retiro").innerHTML=edadCronologicaRetiro
+    document.getElementById("tbl_edad_obligatoria").innerHTML=edadLaboralObligatoria
+    document.getElementById("tbl2_edad_obligatoria").innerHTML=edadLaboralObligatoria
     document.getElementById("tbl2_edad_retiro").innerHTML="50"
-    const axts=15-datosCalculo.antiguedad
-    const axtc=25-datosCalculo.edad
+
     document.getElementById("tbl2_diferencia").innerHTML=axts > axtc ? axts:axtc
 }
 
@@ -370,20 +391,53 @@ function mostrarDatosGenerales(){
 * @returns {object} calculos de simulación
 */
 const calculoSimulacion=(datosEmpleado)=>{
-    if(datosEmpleado.edadLaboral>=25 && datosEmpleado.edad>=50){
-        Swal.fire({
-            title: "Generación 1!",
-            text: "Usted cumple con la edad tendra jubilación al 100%!",
-            icon: "success"
-        });
-        limpiaTablas()
-        return false
-    }
-    mostrarDatosEnTablas(datosEmpleado.sm)
-    console.log("(383) datoscalculo:",datosCalculo)
-
     mostrarDatosGenerales()
-    return true 
+    console.log("(395) datoscalculo:",datosCalculo)
+    if(datosEmpleado.generacion===2){
+        if(datosEmpleado.edad>=60){
+            if(datosEmpleado.edad>=65 && datosEmpleado.edadLaboral>=15){
+                Swal.fire({
+                    title: `Generación ${datosEmpleado.generacion} modalidad ${datosEmpleado.modalidad}!`,
+                    text: "jubilación retiro forzoso !",
+                    icon: "success"
+                });
+                limpiaTablas()
+            }else{
+                //calcular pension
+                mostrarDatosEnTablas(datosEmpleado.sm)
+            }
+        }else{
+            Swal.fire({
+                title: `Generación ${datosEmpleado.generacion} modalidad ${datosEmpleado.modalidad}!`,
+                text: "De acuerdo al CCT aun no es posible jubilarse !",
+                icon: "success"
+            });
+            limpiaTablas()
+        }
+    }else if(datosEmpleado.generacion===1){
+        if(datosEmpleado.edad>=50 && datosEmpleado.edadLaboral>=25){
+            Swal.fire({
+                title: `Generación ${datosEmpleado.generacion} modalidad ${datosEmpleado.modalidad}!`,
+                text: "jubilación al 100% !",
+                icon: "success"
+            });
+            limpiaTablas()
+        }else{
+            if(datosEmpleado.edad>=50 && datosEmpleado.edadLaboral>=15){
+                //calcular jubilacion
+                mostrarDatosEnTablas(datosEmpleado.sm)
+            }else{
+                // caso especial
+                Swal.fire({
+                    title: `Generación ${datosEmpleado.generacion} modalidad ${datosEmpleado.modalidad}!`,
+                    text: "Caso especial !",
+                    icon: "success"
+                });
+                limpiaTablas()
+            }
+        }
+    }
+    return  
 }
 
 /**
@@ -399,7 +453,7 @@ function calcularGeneracion(fechaIngreso){
 * @returns {number} modalidad
 */
 function calcularModalidad(fechaAltaImss){
-    const fechaLimite=new Date("1997-06-30") //>30/06/97 es genaracion 2
+    const fechaLimite=new Date("1997-06-01") //>30/06/97 es genaracion 2
     return (fechaAltaImss>fechaLimite) ? 97 : 73
 }
 
@@ -474,7 +528,7 @@ document.getElementById("btnBuscaEmpleado").addEventListener("click", function(e
         return false
     }
     //buscar dato en la bd
-    fetch(`socios/one/${numEmp}`)
+    fetch(`${URLsocios}/one/${numEmp}`)
     .then(data=>{
         // console.log("resp==>",data)
         if(!data.ok) return Promise.reject("Respuesta falliad del servidor")
@@ -537,7 +591,7 @@ document.getElementById("btnGuardarDatos").addEventListener("click", function(ev
     const df=new FormData(f)
     const fjson=Object.fromEntries(df)
     // console.log("(397) formulario:",fjson)
-    fetch('socios/add',{
+    fetch(`${URLsocios}/add`,{
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -545,7 +599,8 @@ document.getElementById("btnGuardarDatos").addEventListener("click", function(ev
         body: JSON.stringify(fjson)
     })
     .then(data=>{
-        if(!data.ok) return Promise.reject("Respuesta falliad del servidor")
+        console.log(`resp en add: ${URLsocios}/add:`,data)
+        if(!data.ok) return Promise.reject("Respuesta fallida del servidor")
         return data.json()
     })
     .then(data=>{
@@ -578,12 +633,13 @@ document.getElementById("formulario").addEventListener("submit", function(event)
     event.preventDefault()
     let datosEmpleado=obtenerDatosDeFormulario()
     if(datosEmpleado == null) return false
-    console.log("(581) datos empleado:",datosEmpleado)
+    console.log("(603) datos empleado:",datosEmpleado)
     datosEmpleado.sm=obtenerSm(datosEmpleado.plaza) //obtener el salario mensual base
     //preparar datos para el calculo
     datosCalculo.prepararDatosCalculo(datosEmpleado)
-    const resp=calculoSimulacion(datosEmpleado)
-    return resp
+    //calcula los resultados de la simulación
+    calculoSimulacion(datosEmpleado)
+    return
 })
 
 /**

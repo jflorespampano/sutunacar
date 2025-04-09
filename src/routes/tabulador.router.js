@@ -33,10 +33,12 @@ router.get('/all', (req,res)=>{
 
 //espera llamado put: http://localhost:3000/tabulador
 //con datos json {"clave":"d33", "sm":45} 
-router.put('/', (req,res)=>{
-    const datos=req.body
-    console.log("actualizar:",datos)
-    res.send(JSON.stringify({success:true, data:datos, message:'actualizado'}))
+router.put('/update/:id/:nv', (req,res)=>{
+    console.log("entro a put")
+    // const datos=req.body
+    // console.log("actualizar:",datos)
+    const id = req.params.id
+    res.send(JSON.stringify({success:true, data:id, message:'sm actualizado'}))
 })
   
 export default router

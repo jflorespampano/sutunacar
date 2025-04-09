@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataTable con JSON y Botón de Edición</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tabla con Datos de un JSON</h1>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Correo Electrónico</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        // Ejemplo de datos en formato JSON
+        const jsonData = [
+            { id: 1, nombre: "Juan Pérez", correo: "juan.perez@example.com" },
+            { id: 2, nombre: "Maria López", correo: "maria.lopez@example.com" },
+            { id: 3, nombre: "Carlos Sánchez", correo: "carlos.sanchez@example.com" }
+        ];
+
+        // Función para cargar los datos en la tabla
+        function cargarDatosEnTabla() {
+            const tbody = document.querySelector("#data-table tbody");
+            tbody.innerHTML = ""; // Limpiar el contenido existente
+
+            jsonData.forEach((registro) => {
+                const fila = document.createElement("tr");
+
+                fila.innerHTML = `
+                    <td>${registro.id}</td>
+                    <td>${registro.nombre}</td>
+                    <td>${registro.correo}</td>
+                    <td><button onclick="editarRegistro(${registro.id})">Editar</button></td>
+                `;
+
+                tbody.appendChild(fila);
+            });
+        }
+
+        // Función para editar el registro
+        function editarRegistro(id) {
+            alert(`Editar registro con ID: ${id}`);
+            // Aquí puedes agregar lógica para editar el registro
+        }
+
+        // Cargar datos al cargar la página
+        document.addEventListener("DOMContentLoaded", cargarDatosEnTabla);
+    </script>
+</body>
+</html>

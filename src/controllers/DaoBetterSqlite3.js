@@ -1,4 +1,5 @@
-import Database from "better-sqlite3";
+import Database from "better-sqlite3"
+import fs from 'fs'
 
 class AppDaoBetterSQLite{
     constructor(dbFilePath){
@@ -6,12 +7,23 @@ class AppDaoBetterSQLite{
         this.db=null
         this.dbOpen=false
     }
-    open(){        
+    /**
+     * Abre la base de datos
+     * @returns {boolean,text} exito/fracaso, mensaje
+     */
+    open(){
+        if (!fs.existsSync(this.dbName)) {
+            console.log('La base de datos no existe:',this.dbName);
+            this.db=null
+            this.dbOpen=false
+            return {dbOpen:false, message:"La base de datos no existe."}
+        }
         // this.db = new Database(this.dbName)
         this.db = new Database(this.dbName, { verbose: console.log });
         //en aplicaciones con alta concurrencia agregar:
         //db.pragma('journal_mode = WAL');
         this.dbOpen=true
+        return {dbOpen:true, message:"Base de datos abierta"}
     }
     run(sql, params = []) {
         // const insertData = this.db.prepare(sql)

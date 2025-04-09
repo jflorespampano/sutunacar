@@ -9,10 +9,21 @@ class ModelEmpleados{
      */
     get(id){
         const sql=`select * from empleados where id=?;`
-        this.dbController.open()
+        const resp=this.dbController.open()
+        if(!resp.dbOpen){
+            return({
+                "success":false,
+                "data":[],
+                "error":resp.message
+            })
+        }
         const data = this.dbController.get(sql,[id])
         this.dbController.close()
-        return data
+        return({
+            "success":true,
+            "data":data,
+            "error":null
+        })
     }
     /**
      * 
@@ -21,10 +32,18 @@ class ModelEmpleados{
      */
     getNe(ne){
         const sql=`select * from empleados where numemp=?;`
-        this.dbController.open()
+        const resp=this.dbController.open()
+        if(!resp.dbOpen){
+            return({
+                "success":false,
+                "data":[],
+                "message":"",
+                "error":resp.message
+            })
+        }
         const data = this.dbController.get(sql,[ne])
         this.dbController.close()
-        return data
+        return(data)
     }
     /**
      * Devuelve la lista de todos los usuarios
@@ -32,10 +51,17 @@ class ModelEmpleados{
      */
     getAll(){
         const sql=`select * from empleados;`
-        this.dbController.open()
+        const resp=this.dbController.open()
+        if(!resp.dbOpen){
+            return({
+                "success":false,
+                "data":[],
+                "error":resp.message
+            })
+        }
         const data = this.dbController.all(sql,[])
         this.dbController.close()
-        return data
+        return(data)
     }
     /**
      * Inserta un registro en users
@@ -50,10 +76,18 @@ class ModelEmpleados{
             values(?,?,?,?,?,
             ?,?,?,?,?)
         `
-        this.dbController.open()
+        console.log("model.empleados(79) sql:",sql)
+        const resp=this.dbController.open()
+        if(!resp.dbOpen){
+            return({
+                "success":false,
+                "data":[],
+                "error":resp.message
+            })
+        }
         const data = this.dbController.run(sql,datos)
         this.dbController.close()
-        return data
+        return(data)
     }
 
     //agregue el método put para actualizar todos los campos de un registro

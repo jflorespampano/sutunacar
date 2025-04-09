@@ -2,9 +2,11 @@ import express from 'express';
 import {join} from 'node:path'
 import sociosRouter from './src/routes/socios.router.js'
 import tabuladorRouter from './src/routes/tabulador.router.js'
+import dotenv from 'dotenv'
 
 // Define un puerto para el servidor
-const PORT = 3000;
+dotenv.config()
+const PORT = process.env.PORT || 3000
 
 //configuraciones del servidor
 const pathViews=join(process.cwd(),'views')
@@ -28,6 +30,11 @@ app.use("/tabulador", tabuladorRouter);
 //devuelve la intefaz del cliente
 app.get("/", (req, res) => {
     res.render("index");
+});
+
+//devuelve la intefaz del cliente para tabulador
+app.get("/admin", (req, res) => {
+  res.render("movTabulador");
 });
 
 //para igonorar la solicitud del favicon
