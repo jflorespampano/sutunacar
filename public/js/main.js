@@ -7,43 +7,44 @@ var fijos={
 }
 
 //pagina 35 cct
-var tabuladorVigente=[
-    {"clave":"d32","descripcion":"PTC medio superior","sm":16807.18},
-    {"clave":"d08","descripcion":"PTC asociado","sm":16122.02},
-    {"clave":"d09","descripcion":"PTC asociado B","sm":18080.27},
-    {"clave":"d33","descripcion":"PTC asociado C","sm":21122.96},
-    {"clave":"d34","descripcion":"PTC titular A","sm":29217.92},
-    {"clave":"d35","descripcion":"PTC titular B","sm":28896.31},
-    {"clave":"d36","descripcion":"PTC titular C","sm":33878.04},
-    {"clave":"d37","descripcion":"HSM NMSA","sm":249.03},
-    {"clave":"d38","descripcion":"HSM NMSB","sm":285.99},
-    {"clave":"d39","descripcion":"HSM NMSC","sm":329.36},
-    {"clave":"d40","descripcion":"HSM NSA","sm":9118.76},
-    {"clave":"d41","descripcion":"HSM NSB","sm":468.56},
-    {"clave":"d42","descripcion":"HSM NSC","sm":498.47},
-    {"clave":"d43","descripcion":"INSTRUCTOR NA-D01","sm":235.84},
-    {"clave":"d44","descripcion":"INSTRUCTOR NA-D02","sm":251.33},
-    {"clave":"d45","descripcion":"INSTRUCTOR NA-D03","sm":258.89},
-    {"clave":"d46","descripcion":"INSTRUCTOR NA-D04","sm":275.4},
-    {"clave":"d47","descripcion":"INSTRUCTOR NA-D05","sm":313.45},
-    {"clave":"d48","descripcion":"INSTRUCTOR NA-D06","sm":317.13},
-    {"clave":"d49","descripcion":"INSTRUCTOR NA-D07","sm":333.01},
-    {"clave":"d451","descripcion":"INSTRUCTOR NA-D09","sm":378.09},
-    {"clave":"d453","descripcion":"INSTRUCTOR NA-D11","sm":427.05},
-    {"clave":"AMB","descripcion":"MANUAL B","sm":4428.64},
-    {"clave":"AMC","descripcion":"MANUAL C","sm":5133.23},
-    {"clave":"ATA","descripcion":"TECNICO A","sm":5441.22},
-    {"clave":"ATB","descripcion":"TECNICO B","sm":6469.88},
-    {"clave":"ATC","descripcion":"TECNICO C","sm":7498.54},
-    {"clave":"ATD","descripcion":"TECNICO D","sm":7598.96},
-    {"clave":"A79","descripcion":"CABO DE OBRA","sm":11766.11},
-    {"clave":"AAA","descripcion":"ADMINISTRATIVO F","sm":8247.37},
-    {"clave":"AA2","descripcion":"ADMINISTRATIVO E","sm":8254.17},
-    {"clave":"AAB","descripcion":"ADMINISTRATIVO D","sm":9805.44},
-    {"clave":"AAC","descripcion":"ADMINISTRATIVO C","sm":11363.53},
-    {"clave":"AAD","descripcion":"ADMINISTRATIVO B","sm":13268.71},
-    {"clave":"A01","descripcion":"ADMINISTRATIVO A","sm":15586.48}
-]
+var tabuladorVigente=[]
+// var tabuladorVigente=[
+//     {"clave":"d32","descripcion":"PTC medio superior","sm":16807.18},
+//     {"clave":"d08","descripcion":"PTC asociado","sm":16122.02},
+//     {"clave":"d09","descripcion":"PTC asociado B","sm":18080.27},
+//     {"clave":"d33","descripcion":"PTC asociado C","sm":21122.96},
+//     {"clave":"d34","descripcion":"PTC titular A","sm":29217.92},
+//     {"clave":"d35","descripcion":"PTC titular B","sm":28896.31},
+//     {"clave":"d36","descripcion":"PTC titular C","sm":33878.04},
+//     {"clave":"d37","descripcion":"HSM NMSA","sm":249.03},
+//     {"clave":"d38","descripcion":"HSM NMSB","sm":285.99},
+//     {"clave":"d39","descripcion":"HSM NMSC","sm":329.36},
+//     {"clave":"d40","descripcion":"HSM NSA","sm":9118.76},
+//     {"clave":"d41","descripcion":"HSM NSB","sm":468.56},
+//     {"clave":"d42","descripcion":"HSM NSC","sm":498.47},
+//     {"clave":"d43","descripcion":"INSTRUCTOR NA-D01","sm":235.84},
+//     {"clave":"d44","descripcion":"INSTRUCTOR NA-D02","sm":251.33},
+//     {"clave":"d45","descripcion":"INSTRUCTOR NA-D03","sm":258.89},
+//     {"clave":"d46","descripcion":"INSTRUCTOR NA-D04","sm":275.4},
+//     {"clave":"d47","descripcion":"INSTRUCTOR NA-D05","sm":313.45},
+//     {"clave":"d48","descripcion":"INSTRUCTOR NA-D06","sm":317.13},
+//     {"clave":"d49","descripcion":"INSTRUCTOR NA-D07","sm":333.01},
+//     {"clave":"d451","descripcion":"INSTRUCTOR NA-D09","sm":378.09},
+//     {"clave":"d453","descripcion":"INSTRUCTOR NA-D11","sm":427.05},
+//     {"clave":"AMB","descripcion":"MANUAL B","sm":4428.64},
+//     {"clave":"AMC","descripcion":"MANUAL C","sm":5133.23},
+//     {"clave":"ATA","descripcion":"TECNICO A","sm":5441.22},
+//     {"clave":"ATB","descripcion":"TECNICO B","sm":6469.88},
+//     {"clave":"ATC","descripcion":"TECNICO C","sm":7498.54},
+//     {"clave":"ATD","descripcion":"TECNICO D","sm":7598.96},
+//     {"clave":"A79","descripcion":"CABO DE OBRA","sm":11766.11},
+//     {"clave":"AAA","descripcion":"ADMINISTRATIVO F","sm":8247.37},
+//     {"clave":"AA2","descripcion":"ADMINISTRATIVO E","sm":8254.17},
+//     {"clave":"AAB","descripcion":"ADMINISTRATIVO D","sm":9805.44},
+//     {"clave":"AAC","descripcion":"ADMINISTRATIVO C","sm":11363.53},
+//     {"clave":"AAD","descripcion":"ADMINISTRATIVO B","sm":13268.71},
+//     {"clave":"A01","descripcion":"ADMINISTRATIVO A","sm":15586.48}
+// ]
 
 let datosEmpleado={
     numEmp:0,
@@ -616,16 +617,6 @@ document.getElementById("btnGuardarDatos").addEventListener("click", function(ev
     })
 })
 
-document.getElementById("menu_ayuda").addEventListener("click", function(event) {
-    event.preventDefault()
-    Swal.fire({
-        imageUrl: "images/imagenSindicato1.jpg",
-        imageHeight: 300,
-        imageWidth: 350,
-        imageAlt: "Ayuda"
-    });
-})
-
 /**
  * Prepara datos y calcula simulación
  */
@@ -642,16 +633,46 @@ document.getElementById("formulario").addEventListener("submit", function(event)
     return
 })
 
+function leeTabuladorDeLaBD(){
+    return fetch('/tabulador/all')
+    .then(resp=>{
+        if(!resp.ok){
+            throw new Error(`Error ${resp.status}: ${resp.statusText}`)
+        }
+        return resp.json()
+    })
+    .then(data=>{
+        const datos=data.data
+        return datos
+    })
+    .catch(error=>{
+        console.log(error)
+        return new Promise((resolve,reject)=>{
+            reject("Error al pedir datos de tabulador desde la bd")
+        })
+    })
+}
+
 /**
  * LLena el combo box "tabulador" CCT pag 35
  */
 function cargarDatosDeTabulador(){
-    const combo=document.getElementById("tabulador")
-    tabuladorVigente.forEach(item=>{
-        const opcion=document.createElement("option");
-        opcion.value=item.clave
-        opcion.textContent=item.descripcion
-        combo.appendChild(opcion)
+    leeTabuladorDeLaBD()
+    .then(datos=>{
+        // console.log("recibi datos tab:", datos)
+        tabuladorVigente=datos
+        //
+        const combo=document.getElementById("tabulador")
+        tabuladorVigente.forEach(item=>{
+            const opcion=document.createElement("option");
+            opcion.value=item.clave
+            opcion.textContent=item.descripcion
+            combo.appendChild(opcion)
+        })
+    })
+    .catch(error=>{
+        console.log("Al tratar de leer el tabulador de la bd:",error)
+        Swal.fire("No se pudieron leer datos de la BD");
     })
 }
 

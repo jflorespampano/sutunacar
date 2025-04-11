@@ -12,15 +12,25 @@ const router = express.Router();
 
 // Home page route.
 router.get("/", function (req, res) {
-  res.send("mensaje tabulador");
+    res.setHeader('Content-Type', 'text/html');
+    res.send("mensaje tabulador");
 });
 
 // espera llamado get http://localhost:3000/tabulador/one/d33
 router.get('/one/:id', (req, res) => {
     const id = req.params.id; // Obtiene el parámetro "id"
-    console.log("(20) router tabulador id:",id)
-    const resp= mc.getClave(id)
+    // console.log("(20) router tabulador id:",id)
+    const resp= mc.get(id)
     // console.log("al buscar:",resp)
+    res.setHeader('Content-Type', 'application/json')
+    res.status(200).send(JSON.stringify(resp))
+})
+
+router.get('/clave/:clave', (req, res) => {
+    const clave = req.params.clave; // Obtiene el parámetro "clave"
+    const resp= mc.getClave(clave)
+    // console.log("(31) tabulador.rotute al buscar:",resp)
+    res.setHeader('Content-Type', 'application/json')
     res.status(200).send(JSON.stringify(resp))
 })
 
@@ -28,17 +38,18 @@ router.get('/one/:id', (req, res) => {
 router.get('/all', (req,res)=>{
     //fata esta parte
     const resp=mc.getAll()
-    res.status(200).json({success:true, data: resp , message:'ahi van los datos'});
+    res.status(200).json(resp);
 })
 
 //espera llamado put: http://localhost:3000/tabulador
 //con datos json {"clave":"d33", "sm":45} 
 router.put('/update/:id/:nv', (req,res)=>{
-    console.log("entro a put")
+    // console.log("entro a put")
     // const datos=req.body
     // console.log("actualizar:",datos)
     const id = req.params.id
-    res.send(JSON.stringify({success:true, data:id, message:'sm actualizado'}))
+    const nv = req.params.nv
+    res.send(JSON.stringify({success:true, data:{id,nv}, message:`sm con id=${id} actualizado a ${nv}`}))
 })
   
 export default router

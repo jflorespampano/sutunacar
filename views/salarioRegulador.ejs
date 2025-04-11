@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculo jubilación</title>
+    <title>Beneficiarios</title>
     <!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
     <link rel="stylesheet" href="css/w3.css">
     <script src="css/sweetalert2.all.min.js"></script>
@@ -44,12 +44,26 @@
     <!-- cuerpo de la página -->
     <div id="app" class="w3-container w3-row w3-padding">
         <div id="div_form" class="w3-card w3-col l4 w3-padding-16">
-            <%- include('pages/altaEmpleado.ejs') %>
-        </div>
-        <div id="div_calculos" class="w3-card w3-col l8 w3-padding-16">
-            <%- include('pages/tablaCalculos.ejs') %>
+            <h3 class="w3-teal w3-center">Salario regulador</h3>
+            <div class="w3-panel w3-padding">
+                <p>
+                    <h4 class="w3-blue w3-center">Situacion actual</h4>
+                    El salario regulador es el último salario de cotización.
+                    <h4 class="w3-blue w3-center">Con la reforma</h4>
+                    Ahora el salario regulador se calculará con base en un porcentaje ponderado de los últimos sueldos de cotización.
+                    Si el trabajador se jubila en 2025, el porcentaje a aplicar es 98.50% del salario promedio ponderado de los últimos 2 años de cotización.
+    
+                    <h4 class="w3-blue w3-center">Conclusión General</h4>
+    
+                    Para los trabajadores con ingreso antes del 18 de septiembre de 2003, la reforma reduce su salario regulador, pero el impacto es menor porque se sigue
+    
+                    Para los trabajadores con ingreso después del 19 de septiembre de 2003, la reforma reduce significativamente su salario regulador, ya que ahora se basa en toda la vida laboral, lo que generalmente resulta en un monto menor.
+                </p>
+
+            </div>
         </div>
     </div>
+    <%- include('pages/footer.ejs') %>
 </body>
-<%- include('includes/scripts') %>
+<%- include('includes/scriptsMenu') %>
 </html>

@@ -53,7 +53,8 @@ class AppDaoBetterSQLite{
         try {
             //si la consulta fue satisfactoria pero no hay datos  devuelve undefined 
             const res = this.db.prepare(sql).get(params)
-            // console.log("try")
+            console.log("sql:",sql,params)
+            // console.log("Dao(56)res:",res)
             return {
                 success:true,
                 data:res===undefined ? [] : [res],
@@ -61,7 +62,7 @@ class AppDaoBetterSQLite{
                 error:null
             }
         } catch (error) {
-            // console.log("catch()")
+            // 
             return {
                 success:false,
                 data:[],

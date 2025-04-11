@@ -9,10 +9,17 @@ class ModelTabulador{
      */
     get(id){
         const sql=`select * from tabulador where id=?;`
-        this.dbController.open()
+        const resp=this.dbController.open()
+        if(!resp.dbOpen){
+            return({
+                "success":false,
+                "data":[],
+                "error":resp.message
+            })
+        }
         const data = this.dbController.get(sql,[id])
         this.dbController.close()
-        return data
+        return(data)
     }
     /**
      * 
@@ -21,10 +28,18 @@ class ModelTabulador{
      */
     getClave(ne){
         const sql=`select * from tabulador where clave=?;`
-        this.dbController.open()
+        const resp=this.dbController.open()
+        if(!resp.dbOpen){
+            return({
+                "success":false,
+                "data":[],
+                "message":"",
+                "error":resp.message
+            })
+        }
         const data = this.dbController.get(sql,[ne])
         this.dbController.close()
-        return data
+        return(data)
     }
     /**
      * Devuelve la lista de todos los renglones
@@ -32,10 +47,17 @@ class ModelTabulador{
      */
     getAll(){
         const sql=`select * from tabulador;`
-        this.dbController.open()
+        const resp=this.dbController.open()
+        if(!resp.dbOpen){
+            return({
+                "success":false,
+                "data":[],
+                "error":resp.message
+            })
+        }
         const data = this.dbController.all(sql,[])
         this.dbController.close()
-        return data
+        return(data)
     }
     update(datos){
         const sql=`
@@ -43,10 +65,17 @@ class ModelTabulador{
             set sm = ?
             where clave = ?;
         `
-        this.dbController.open()
+        const resp=this.dbController.open()
+        if(!resp.dbOpen){
+            return({
+                "success":false,
+                "data":[],
+                "error":resp.message
+            })
+        }
         const data = this.dbController.run(sql,datos)
         this.dbController.close()
-        return data
+        return(data)
     }
 }
 export default ModelTabulador

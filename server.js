@@ -32,13 +32,26 @@ app.get("/", (req, res) => {
     res.render("index");
 });
 
+app.get("/beneficiarios", (req, res) => {
+    res.render("beneficiarios");
+});
+
+app.get("/aguinaldo", (req, res) => {
+    res.render("aguinaldo");
+});
+
+app.get("/salario_regulador", (req, res) => {
+    res.render("salarioRegulador");
+});
+
 //devuelve la intefaz del cliente para tabulador
 app.get("/admin", (req, res) => {
   res.render("movTabulador");
 });
 
-//para igonorar la solicitud del favicon
-app.get('/favicon.ico', (req, res) => res.status(204).end());
+//para igonorar la solicitud del favicon si no tenemos favicon.ico
+//si existe ponerlo en la carpeta public
+// app.get('/favicon.ico', (req, res) => res.status(204).end());
 
 // Middlewares
 app.use((req, res, next) => {

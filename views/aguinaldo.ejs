@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculo jubilación</title>
+    <title>Aguinaldo</title>
     <!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
     <link rel="stylesheet" href="css/w3.css">
     <script src="css/sweetalert2.all.min.js"></script>
@@ -44,12 +44,10 @@
     <!-- cuerpo de la página -->
     <div id="app" class="w3-container w3-row w3-padding">
         <div id="div_form" class="w3-card w3-col l4 w3-padding-16">
-            <%- include('pages/altaEmpleado.ejs') %>
-        </div>
-        <div id="div_calculos" class="w3-card w3-col l8 w3-padding-16">
-            <%- include('pages/tablaCalculos.ejs') %>
+            <%- include('pages/aguinaldo.ejs') %>
         </div>
     </div>
+    <%- include('pages/footer.ejs') %>
 </body>
-<%- include('includes/scripts') %>
+<%- include('includes/scriptsMenu') %>
 </html>

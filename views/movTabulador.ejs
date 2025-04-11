@@ -11,56 +11,81 @@
     </style>
 </head>
 <body>
-    <h1>Tabla con Datos de un JSON</h1>
-    <table id="data-table" class="w3-table-all">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Correo Electrónico</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+    <div class="w3-continer w3-padding">
+        <h3>Tabulador CCT-2025</h3>
+        <table id="data-table" class="w3-table-all">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Clave</th>
+                    <th>Descripción</th>
+                    <th>SM</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
 
     <script>
         // Ejemplo de datos en formato JSON
-        const jsonData = [
-            { id: 1, nombre: "Juan Pérez", correo: "juan.perez@example.com" },
-            { id: 2, nombre: "Maria López", correo: "maria.lopez@example.com" },
-            { id: 3, nombre: "Carlos Sánchez", correo: "carlos.sanchez@example.com" }
+        let jsonData = [
+        {"id":1,"clave":"d32","descripcion":"TC medio superior","sm":16807.18},
+        {"id":2,"clave":"d08","descripcion":"TC asociado","sm":16122.02}
         ];
 
         // Función para cargar los datos en la tabla
         function cargarDatosEnTabla() {
             const tbody = document.querySelector("#data-table tbody");
             tbody.innerHTML = ""; // Limpiar el contenido existente
-
-            jsonData.forEach((registro) => {
-                const fila = document.createElement("tr");
-
-                fila.innerHTML = `
-                    <td>${registro.id}</td>
-                    <td>${registro.nombre}</td>
-                    <td>${registro.correo}</td>
-                    <td><button 
-                        class="w3-button w3-teal w3-round"
-                        onclick="editarRegistro(${registro.id})">Editar</button
-                    ></td>
-                `;
-
-                tbody.appendChild(fila);
-            });
+            fetch('tabulador/all')
+            .then(resp=>{
+                // console.log("resp:",resp)
+                if(!resp.ok)throw new Error("No se recbieron datos")
+                return resp.json()
+            })
+            .then(data=>{
+                const datos=data.data
+                // console.log("datos:",datos)
+                jsonData=datos
+                // console.log(typeof datos)
+                jsonData.forEach((registro) => {
+                    const fila = document.createElement("tr");
+                    fila.innerHTML = `
+                        <td>${registro.id}</td>
+                        <td>${registro.clave}</td>
+                        <td>${registro.descripcion}</td>
+                        <td>${registro.sm}</td>
+                        <td><button 
+                            class="w3-button w3-teal w3-round"
+                            onclick="editarRegistro(${registro.id})">Actualizar sm</button
+                        ></td>
+                    `;
+    
+                    tbody.appendChild(fila);
+                });
+            })
+            .catch(error=>{
+                console.log("Error:",Error.message)
+            })
         }
-
+        //quitar comas
+        function quitarComas(cadena) {
+            return cadena.replace(/,/g, "");
+        }
+        // Para verificar si un string es numérico en JavaScript, 
+        function esStringNumerico(valor) {
+            // Convertimos el string en un número y verificamos si es realmente numérico
+            return !isNaN(valor) && valor.trim() !== "";
+        }
         // Función para editar el registro
         function editarRegistro(id) {
             // alert(`Editar registro con ID: ${id}`);
             // Aquí puedes agregar lógica para editar el registro
             Swal.fire({
-                title: "Nuevo valor para el SM",
+                title: "Nuevo valor para SM",
+                icon: "question",
                 input: "text",
                 inputAttributes: {
                     autocapitalize: "off"
@@ -68,10 +93,15 @@
                 showCancelButton: true,
                 confirmButtonText: "Guardar",
                 showLoaderOnConfirm: true,
-                preConfirm: async (login) => {
+                preConfirm: async (nv_str) => {
                     try {
+                        const nv=quitarComas(nv_str)
+                        console.log("nv:",nv)
+                        if(! esStringNumerico(nv)){
+                            throw new Error("Debe dar un número")
+                        }
                         const githubUrl = `
-                            /tabulador/update/${id}/${login}
+                            /tabulador/update/${id}/${nv}
                         `
                         const response = await fetch(githubUrl,{
                             method: "PUT"
@@ -84,7 +114,7 @@
                         return response.json();
                     } catch (error) {
                         Swal.showValidationMessage(`
-                            Request failed: ${error}
+                            Error: ${error.message}
                         `);
                     }
                 },
@@ -92,11 +122,12 @@
             })
             .then((result) => {
                 if (result.isConfirmed) {
-                        console.log("result",result.value)
-                        Swal.fire({
-                        title: `${result.value.message}'`
+                    console.log("result",result.value)
+                    Swal.fire({
+                        title: `${result.value.message}`,
+                        icon: "success"
                     });
-                    // cargarDatosEnTabla()
+                    cargarDatosEnTabla()
                 }
             });
         }

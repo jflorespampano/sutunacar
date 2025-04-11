@@ -13,6 +13,7 @@ const router = express.Router();
 
 // Home page route.
 router.get("/", function (req, res) {
+  res.setHeader('Content-Type', 'text/html');
   res.send("mensaje socio");
 });
 
@@ -24,6 +25,7 @@ router.post('/add', (req,res)=>{
     let resp= mc.getNe(datos.numEmp)
     const data=resp.data
     if(resp.error){
+      res.setHeader('Content-Type', 'application/json');
       res.status(500).send({success:true, message, error:resp.error})
       return
     }
@@ -47,6 +49,7 @@ router.post('/add', (req,res)=>{
       resp=null
       message="registro repetido"
     }
+    res.setHeader('Content-Type', 'application/json');
     res.status(200).json({success:true, message, resp});
 })
 
@@ -55,15 +58,18 @@ router.get('/one/:id', (req, res) => {
     const id = req.params.id; // Obtiene el parámetro "id"
     const resp= mc.getNe(id)
     if(resp.error){
+      res.setHeader('Content-Type', 'application/json');
       res.status(500).send({success:false, message:resp.message, error:resp.error})
       return
     }
     // console.log("al buscar:",resp)
+    res.setHeader('Content-Type', 'application/json');
     res.status(200).send(JSON.stringify(resp))
 })
 
 router.get('/all', (req,res)=>{
     //fata esta parte
+    res.setHeader('Content-Type', 'application/json');
     res.status(200).json({success:true, data: [], message:'ahi van los datos'});
 })
   
