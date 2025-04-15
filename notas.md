@@ -20,3 +20,17 @@ Para calcular el dígito verificador, cada uno de los primeros 10 dígitos se mu
 
 
 
+## contar
+
+```sql
+SELECT COUNT(*) 
+FROM personas 
+WHERE sexo = 'F';
+
+SELECT COUNT(*) 
+FROM personas;
+
+SELECT * 
+FROM personas 
+WHERE id IN (1, 2, 3);
+```

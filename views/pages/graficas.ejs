@@ -1,0 +1,187 @@
+<div id="graficas">
+    <!-- sexo -->
+    <div class="w3-row w3-padding-16">
+        <div class="w3-col l4 w3-padding-16">
+            <p class="w3-container w3-padding-16">
+                Grafica Sexo<br>
+                Rojo: M<br>
+                Azul: F
+            </p>
+        </div>
+        <div class="w3-col l4 w3-padding-16">
+            <canvas id="pieChartSexo" width="50" height="50"></canvas>
+        </div>
+    </div>
+    <!-- grafica por generacion -->
+    <div class="w3-row w3-padding-16">
+        <div class="w3-col l4 w3-padding-16">
+            <p class="w3-container w3-padding-16">
+                Grafica Generación<br>
+                Rojo: G1<br>
+                Azul: G2
+            </p>
+        </div>
+        <div class="w3-col l4 w3-padding-16">
+            <canvas id="pieChartGeneracion" width="50" height="50"></canvas>
+        </div>
+    </div>
+
+    <!-- grafica por segmento -->
+    <div class="w3-row w3-padding-16">
+        <div class="w3-col l4 w3-padding-16">
+            <p class="w3-container w3-padding-16">
+                Grafica Segmento<br>
+                Rojo: Manuales<br>
+                Azul: Docentes<br>
+                Verde: Administrativos
+            </p>
+        </div>
+        <div class="w3-col l4 w3-padding-16">
+            <canvas id="pieChartSegmento" width="50" height="50"></canvas>
+        </div>
+    </div>
+ </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const getEstadisticas=async ()=>{
+        try {
+            const resp=await fetch("socios/estadisticas")
+            const data=await resp.json()
+            return data
+        } catch (error) {
+            return({
+                success:false,
+                data:[],
+                error:error.message
+            })
+        }
+    }
+    //
+    function ponerGrafica2Valores(canvas,labels=['G1', 'G2'],data=[20,20]){
+        const ctx = document.getElementById(canvas).getContext('2d');
+        const myPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Datos',
+                    data: data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                }
+            }
+        });
+    }
+
+    function ponerGrafica3Valores(
+        canvas,
+        labels=['Manuales', 'Docentes', 'Administrativos'],
+        data=[30, 50, 20]
+    ){
+        const ctxSegmento = document.getElementById(canvas).getContext('2d');
+        const myPieChartSegmento = new Chart(ctxSegmento, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Datos',
+                    data: data,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(75, 192, 192, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                }
+            }
+        });
+    }
+    getEstadisticas()
+    .then(data=>{
+        datos=data.data
+        console.log("datos de est:",JSON.stringify(datos))
+        if(datos.sexo.length < 2){
+            throw new Error("Faltan datos de sexo")
+        }
+        const pm='M '+(datos.sexo[0]/(datos.sexo[0]+datos.sexo[1]))*100+'%'
+        const pf='F '+(datos.sexo[1]/(datos.sexo[0]+datos.sexo[1])*100)+'%'
+        ponerGrafica2Valores(
+            "pieChartSexo",
+            [pm, pf],
+            datos.sexo
+        )
+        if(datos.generacion.length < 2){
+            throw new Error("Faltan datos de generación")
+        }
+        const pg1='M '+(datos.generacion[0]/(datos.generacion[0]+datos.generacion[1]))*100+'%'
+        const pg2='F '+(datos.generacion[1]/(datos.generacion[0]+datos.generacion[1])*100)+'%'
+        ponerGrafica2Valores(
+            "pieChartGeneracion",
+            [pg1, pg2],
+            datos.generacion
+        )
+        if(datos.segmento.length < 3){
+            throw new Error("Faltan datos de segmento")
+        }
+        const pman='Manuales '+
+            (datos.segmento[0]
+            /
+            (datos.segmento[0]+datos.segmento[1]+datos.segmento[2])
+            )*100
+            +
+            '%'
+        const pdoc='Docentes '+
+            (datos.segmento[1]
+            /
+            (datos.segmento[0]+datos.segmento[1]+datos.segmento[2])
+            )*100
+            +
+            '%'
+        const padm='Administrativos '+
+            (datos.segmento[2]
+            /
+            (datos.segmento[0]+datos.segmento[1]+datos.segmento[2])
+            )*100
+            +
+            '%'
+        ponerGrafica3Valores(
+            "pieChartSegmento",
+            [pman,pdoc,padm],
+            datos.segmento
+        )
+    })
+    .catch(error=>{
+        console.log(error)
+        alert("Error al leer datos de estadísticas.")
+    })
+    
+</script>

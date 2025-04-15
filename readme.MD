@@ -19,16 +19,27 @@ http://localhost:3000/admin
 
 ## comisión de análisis de junilación
 
-Mtra America
-Dr. 
-Dr. 
+Mtra. America Zavala Chan
+Dr. Angel E. Zapata Torresy
+Dr. Javier Rivera Dominguez
 
 ## desarrolladores
 
-Mi Jesús Alejandro Flores Hernández
 Dra. Ma. del Rosario Vazques Aragon
+MI. Jesús Alejandro Flores Hernández
 
 ## notas
+
+Ver jest para pruebs unitarias
+[intro](https://tecnops.es/testing-en-javascript-con-jest-parte-1-de-2/)
+y para productivo:
+
+```sh
+npm install -g pm2
+pm2 start app.js
+pm2 save
+pm2 startup
+```
 
 [diagrama de flujo](https://mailunacar-my.sharepoint.com/:u:/g/personal/mvazquez_pampano_unacar_mx/EboiGPtfaGxNocEn-l0ALGwBjynaEWAWL3IVhl79ClI5uA?e=yjs7AP)
 

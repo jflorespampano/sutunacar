@@ -1,0 +1,80 @@
+[
+    {
+      "id": 3,
+      "numemp": "500",
+      "nombre": "Rosa Luz Rios",
+      "edad": 65,
+      "correo": "rosal@correo.com",
+      "telefono": "938-00-00-01",
+      "nss": "62876429101",
+      "puesto": "d42",
+      "fecha_ingreso_unacar": "2004-15-01",
+      "mes_ingreso_imss": "01",
+      "dia_ingreso_imss": "1"
+    },
+    {
+      "id": 4,
+      "numemp": "501",
+      "nombre": "Ana perez chan",
+      "edad": 62,
+      "correo": "ana@correo.com",
+      "telefono": "938-00-00-10",
+      "nss": "62956429101",
+      "puesto": "d37",
+      "fecha_ingreso_unacar": "2015-16-01",
+      "mes_ingreso_imss": "02",
+      "dia_ingreso_imss": "10"
+    },
+    {
+      "id": 5,
+      "numemp": "502",
+      "nombre": "Bety morales lli",
+      "edad": 58,
+      "correo": "bety@correo.com",
+      "telefono": "938-00-00-10",
+      "nss": "62016429158",
+      "puesto": "d37",
+      "fecha_ingreso_unacar": "2015-02-01",
+      "mes_ingreso_imss": "02",
+      "dia_ingreso_imss": "11"
+    },
+    {
+      "id": 6,
+      "numemp": "503",
+      "nombre": "Susi chi puc",
+      "edad": 61,
+      "correo": "susi@correo.com",
+      "telefono": "938-00-00-12",
+      "nss": "72876429984",
+      "puesto": "d38",
+      "fecha_ingreso_unacar": "1995-04-04",
+      "mes_ingreso_imss": "03",
+      "dia_ingreso_imss": "12"
+    },
+    {
+      "id": 7,
+      "numemp": "1250",
+      "nombre": "Javier Rivera Diminguez",
+      "edad": 57,
+      "correo": "jr@mail.com",
+      "telefono": "938-00-00-00",
+      "nss": "65966720495",
+      "puesto": "d34",
+      "fecha_ingreso_unacar": "2003-01-27",
+      "mes_ingreso_imss": "01",
+      "dia_ingreso_imss": "20"
+    },
+    {
+      "id": 11,
+      "numemp": "2997",
+      "nombre": "Asunción Cordero",
+      "edad": 50,
+      "correo": "asun@mail.com",
+      "telefono": "938-00-00-10",
+      "nss": "81017400789",
+      "puesto": "d40",
+      "fecha_ingreso_unacar": "2013-04-11",
+      "mes_ingreso_imss": "01",
+      "dia_ingreso_imss": "1"
+    }
+  ]

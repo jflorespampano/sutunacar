@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "node server.js",
-    "watch": "node --watch server.js"
+    "watch": "node --watch server.js",
+    "creadb": "node crearBaseDeDatos.js"
   },
   "keywords": [],
   "author": "",

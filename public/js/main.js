@@ -1,5 +1,7 @@
 // const URLsocios="http://localhost:3000/socios"
-const URLsocios="socios"
+const URLsocios = "socios"
+const URLgetTabulador = "/tabulador/all"
+const URLgetCt = "/ct/all"
 
 var fijos={
     "despensa":1088.00,
@@ -8,43 +10,7 @@ var fijos={
 
 //pagina 35 cct
 var tabuladorVigente=[]
-// var tabuladorVigente=[
-//     {"clave":"d32","descripcion":"PTC medio superior","sm":16807.18},
-//     {"clave":"d08","descripcion":"PTC asociado","sm":16122.02},
-//     {"clave":"d09","descripcion":"PTC asociado B","sm":18080.27},
-//     {"clave":"d33","descripcion":"PTC asociado C","sm":21122.96},
-//     {"clave":"d34","descripcion":"PTC titular A","sm":29217.92},
-//     {"clave":"d35","descripcion":"PTC titular B","sm":28896.31},
-//     {"clave":"d36","descripcion":"PTC titular C","sm":33878.04},
-//     {"clave":"d37","descripcion":"HSM NMSA","sm":249.03},
-//     {"clave":"d38","descripcion":"HSM NMSB","sm":285.99},
-//     {"clave":"d39","descripcion":"HSM NMSC","sm":329.36},
-//     {"clave":"d40","descripcion":"HSM NSA","sm":9118.76},
-//     {"clave":"d41","descripcion":"HSM NSB","sm":468.56},
-//     {"clave":"d42","descripcion":"HSM NSC","sm":498.47},
-//     {"clave":"d43","descripcion":"INSTRUCTOR NA-D01","sm":235.84},
-//     {"clave":"d44","descripcion":"INSTRUCTOR NA-D02","sm":251.33},
-//     {"clave":"d45","descripcion":"INSTRUCTOR NA-D03","sm":258.89},
-//     {"clave":"d46","descripcion":"INSTRUCTOR NA-D04","sm":275.4},
-//     {"clave":"d47","descripcion":"INSTRUCTOR NA-D05","sm":313.45},
-//     {"clave":"d48","descripcion":"INSTRUCTOR NA-D06","sm":317.13},
-//     {"clave":"d49","descripcion":"INSTRUCTOR NA-D07","sm":333.01},
-//     {"clave":"d451","descripcion":"INSTRUCTOR NA-D09","sm":378.09},
-//     {"clave":"d453","descripcion":"INSTRUCTOR NA-D11","sm":427.05},
-//     {"clave":"AMB","descripcion":"MANUAL B","sm":4428.64},
-//     {"clave":"AMC","descripcion":"MANUAL C","sm":5133.23},
-//     {"clave":"ATA","descripcion":"TECNICO A","sm":5441.22},
-//     {"clave":"ATB","descripcion":"TECNICO B","sm":6469.88},
-//     {"clave":"ATC","descripcion":"TECNICO C","sm":7498.54},
-//     {"clave":"ATD","descripcion":"TECNICO D","sm":7598.96},
-//     {"clave":"A79","descripcion":"CABO DE OBRA","sm":11766.11},
-//     {"clave":"AAA","descripcion":"ADMINISTRATIVO F","sm":8247.37},
-//     {"clave":"AA2","descripcion":"ADMINISTRATIVO E","sm":8254.17},
-//     {"clave":"AAB","descripcion":"ADMINISTRATIVO D","sm":9805.44},
-//     {"clave":"AAC","descripcion":"ADMINISTRATIVO C","sm":11363.53},
-//     {"clave":"AAD","descripcion":"ADMINISTRATIVO B","sm":13268.71},
-//     {"clave":"A01","descripcion":"ADMINISTRATIVO A","sm":15586.48}
-// ]
+var centroDeTrabajo=[]
 
 let datosEmpleado={
     numEmp:0,
@@ -63,7 +29,7 @@ let datosCalculo={
     "sb":0,
     "quinquenio":0,
     "despensa":1088.00,
-    "arte":288.84,
+    "arte":233.84,
     "primavacacional":0,
     "estimulocalidad":0,
     "ajustecalendario":0,
@@ -167,6 +133,7 @@ let datosCalculo={
 
 }
 
+//-----------------> para biblioteca ------------------------->
 /**
 * Calcula una edad con base en una fecha dada
 * @param {string} fecha
@@ -210,6 +177,16 @@ function calcularQuinquenio(tipoEmpleado){
 }
 
 /**
+ * Pone comas de miles
+ * @param {*} numero 
+ * @returns 
+ */
+function formateaNumero(numero){
+    let tmp=numero.toFixed(2)
+    return parseFloat(tmp).toLocaleString('en-US')
+}
+
+/**
 * Prepara datos para el calculo del quinquenio.
 * @param {object} datosEmpleado
 * @returns {object} {porcebtaje, monto}
@@ -222,9 +199,171 @@ function quinquenio(datosEmpleado){
     return {porcentaje,montoQuinquenio}
 }
 
-function formateaNumero(numero){
-    let tmp=numero.toFixed(2)
-    return parseFloat(tmp).toLocaleString('en-US')
+/**
+ * 
+ * @param {*} URLgetTabulador 
+ * @returns 
+ */
+function cargadDatosDelServer(URLgetTabulador){
+    return fetch(`${URLgetTabulador}`)
+    .then(resp=>{
+        if(!resp.ok){
+            throw new Error(`Error ${resp.status}: ${resp.statusText}`)
+        }
+        return resp.json()
+    })
+    .then(data=>{
+        const datos=data.data
+        return datos
+    })
+    .catch(error=>{
+        console.log(error)
+        return new Promise((_,reject)=>{
+            reject("Error al pedir datos de tabulador desde la bd")
+        })
+    })
+}
+
+/**
+* Obtener generación (1/2 si fecha ingreso > "2003-09-18").
+* @returns {number} generación (1/2)
+*/
+function calcularGeneracion(fechaIngreso){
+    return (new Date(fechaIngreso) > new Date("2003-09-18")) ? 2 : 1
+} 
+
+/**
+* Obtener modalidad (97/73).
+* @returns {number} modalidad
+*/
+function calcularModalidad(fechaAltaImss){
+    const fechaLimite=new Date("1997-06-01") //>30/06/97 es genaracion 2
+    return (fechaAltaImss>fechaLimite) ? 97 : 73
+}
+
+function verificaCampoNumerico(valor){
+    // Verificar si el campo está vacío
+    if (edad === "") {
+        return false
+      }
+      // Verificar si es un número válido y mayor que 0
+      else if (isNaN(valor) || Number(valor) <= 0) {
+        return false
+      }
+      // Si cumple las validaciones
+      else {
+        return true
+      }
+}
+function verificaCampoFecha(fecha){
+    // Verificar si el campo está vacío
+    if (fecha === "") {
+        return false
+    } 
+    // Verificar si la fecha es válida y opcionalmente dentro de un rango
+    //   else {
+    //     const fechaSeleccionada = new Date(fecha);
+    //     const fechaMinima = new Date("2025-01-01");
+    //     const fechaMaxima = new Date("2025-12-31");
+  
+    //     if (fechaSeleccionada < fechaMinima || fechaSeleccionada > fechaMaxima) {
+    //       document.getElementById("mensaje").innerText = "La fecha debe estar entre el 1 de enero y el 31 de diciembre de 2025.";
+    //     } else {
+    //       document.getElementById("mensaje").innerText = `Has seleccionado: ${fecha}`;
+    //     }
+    //   }
+    return true
+}
+//-----------------> fin de para biblioteca ------------------------->
+
+// Función para establecer el género seleccionado
+/**
+ * Establece el genero en el rsio button
+ * @param {*} name name del control
+ * @param {*} value valor
+ */
+function establecerGenero(name,value) {
+    const s=`input[name="${name}"][value="${value}"]`
+    const radio = document.querySelector(s);
+    // console.log("🚀 ~ establecerGenero ~ s:", s)
+    if (radio) {
+        radio.checked = true;
+        // console.log(`Género establecido a: ${value}`);
+    } else {
+        console.error(`Opción de género no encontrada: ${value}`);
+    }
+}
+
+function activaOpcionEnSelect(combo,option){
+    let select = document.getElementById(combo);
+    for (let i = 0; i < select.options.length; i++) {
+        if (select.options[i].value === option) {
+            select.options[i].selected = true;
+            break;
+        }
+    }
+}
+
+/**
+ * 
+ * @param {*} nombreDelCombo combo a poblar
+ * @param {*} arreglo arreglo json con campos clave y descripcion
+ */
+function pueblaSelect(nombreDelCombo,arreglo){
+    const combo=document.getElementById(nombreDelCombo)
+    arreglo.forEach(item=>{
+        const opcion=document.createElement("option");
+        opcion.value=item.clave
+        opcion.textContent=item.descripcion
+        combo.appendChild(opcion)
+    })
+}
+
+function limpiaControles(){
+    document.getElementById("nombre").value=""
+    document.getElementById("edad").value=0
+    document.getElementById("nss").value=""
+    document.querySelector("#correo").value=""
+    document.querySelector("#telefono").value=""
+}
+
+function verificaCampos(){
+    const numEmp = document.getElementById("numEmp").value.trim();
+    if(!verificaCampoNumerico(numEmp)){
+        Swal.fire("Número de empleado incorrecto!");
+        return false
+    }
+    const nombre = document.getElementById("nombre").value.trim();
+    if (nombre === "") {
+        Swal.fire("Nombre incorrecto.")
+        return false
+    }
+    const edad = document.getElementById("edad").value.trim();
+    if(!verificaCampoNumerico(edad)){
+        Swal.fire("Edad incorrecta!");
+        return false
+    }
+    //verifica el NSS
+    const ssn = document.getElementById("nss").value;
+    const ssnRegex = /^[0-9]{11}$/;
+    const test=ssnRegex.test(ssn)
+    // console.log("Test:",test)
+    if (!test) {
+        //document.getElementById("mensaje-error").style.display = "none"; // Ocultar mensaje de error
+        Swal.fire("Número de Seguro Social inválido!");
+        return false
+    }
+    
+    fechaIngreso=document.querySelector("#ingreso")
+    if(!verificaCampoFecha(fechaIngreso)){
+        Swal.fire("Fecha de ingreso incorrecta!");
+        return false
+    }
+    let dato=document.querySelector("#correo").value.trim()
+    if(dato==="") document.querySelector("#correo").value="sd"
+    dato=document.querySelector("#telefono").value.trim()
+    if(dato==="") document.querySelector("#telefono").value="sd"
+    return true
 }
 
 /**
@@ -246,6 +385,11 @@ function llenarDatosTabla(datosCalculo){
     return true
 }
 
+/**
+ * LLena la columna Actual
+ * @param {*} datosCalculo 
+ * @param {*} totalsc salario de cotizacion para el cálculo actual
+ */
 function llenarTablaSBActual(datosCalculo,totalsc){
     document.querySelector("#tbl_sbA").innerHTML=datosCalculo.sb.toLocaleString('en-US')
     document.querySelector("#tbl_quinquenioA").innerHTML=formateaNumero(datosCalculo.quinquenio)
@@ -257,6 +401,11 @@ function llenarTablaSBActual(datosCalculo,totalsc){
     document.querySelector("#tbl_totalscA").innerHTML=formateaNumero(totalsc)
 }
 
+/**
+ * LLena la columna como pensmos debe ser el cálculo
+ * @param {*} datosCalculo 
+ * @param {*} totalsc salario de cotizacion para la columna como debe hacerse el cálulo
+ */
 function llenarTablaSBNosotros(datosCalculo,totalsc){
     document.querySelector("#tbl_sbN").innerHTML=datosCalculo.sb.toLocaleString('en-US')
     document.querySelector("#tbl_quinquenioN").innerHTML=formateaNumero(datosCalculo.quinquenio)
@@ -269,6 +418,11 @@ function llenarTablaSBNosotros(datosCalculo,totalsc){
     document.querySelector("#tbl_totalscN").innerHTML=formateaNumero(totalsc)
 }
 
+/**
+ * LLena la columna G1
+ * @param {*} datosCalculo 
+ * @param {*} totalsc salario de cotizacion para G1
+ */
 function llenarTablaSBG1(datosCalculo,totalsc){
     document.querySelector("#tbl_sbG").innerHTML=datosCalculo.sb.toLocaleString('en-US')
     document.querySelector("#tbl_quinquenioG").innerHTML=formateaNumero(datosCalculo.quinquenio)
@@ -353,9 +507,10 @@ function limpiaTablas(){
     document.querySelector("#tbl_totalscG").innerHTML=""
 }
 
+/**
+ * mostrar datos generales en la tabla datos generales
+ */
 function mostrarDatosGenerales(){
-    //mostrar datos generales
-    
     let axts, axtc, edadCronologicaRetiro, edadLaboralObligatoria, diferencia
     const leyImss=calcularModalidad(new Date(datosEmpleado.fechaAltaImss))
     if(leyImss===97){
@@ -380,7 +535,6 @@ function mostrarDatosGenerales(){
     document.getElementById("tbl_edad_obligatoria").innerHTML=edadLaboralObligatoria
     document.getElementById("tbl2_edad_obligatoria").innerHTML=edadLaboralObligatoria
     document.getElementById("tbl2_edad_retiro").innerHTML="50"
-
     document.getElementById("tbl2_diferencia").innerHTML=axts > axtc ? axts:axtc
 }
 
@@ -393,7 +547,7 @@ function mostrarDatosGenerales(){
 */
 const calculoSimulacion=(datosEmpleado)=>{
     mostrarDatosGenerales()
-    console.log("(395) datoscalculo:",datosCalculo)
+    console.log("(359) datoscalculo:",datosCalculo)
     if(datosEmpleado.generacion===2){
         if(datosEmpleado.edad>=60){
             if(datosEmpleado.edad>=65 && datosEmpleado.edadLaboral>=15){
@@ -402,7 +556,8 @@ const calculoSimulacion=(datosEmpleado)=>{
                     text: "jubilación retiro forzoso !",
                     icon: "success"
                 });
-                limpiaTablas()
+                // limpiaTablas()
+                mostrarDatosEnTablas(datosEmpleado.sm)
             }else{
                 //calcular pension
                 mostrarDatosEnTablas(datosEmpleado.sm)
@@ -422,7 +577,8 @@ const calculoSimulacion=(datosEmpleado)=>{
                 text: "jubilación al 100% !",
                 icon: "success"
             });
-            limpiaTablas()
+            // limpiaTablas()
+            mostrarDatosEnTablas(datosEmpleado.sm)
         }else{
             if(datosEmpleado.edad>=50 && datosEmpleado.edadLaboral>=15){
                 //calcular jubilacion
@@ -441,41 +597,6 @@ const calculoSimulacion=(datosEmpleado)=>{
     return  
 }
 
-/**
-* Obtener generación (1/2 si fecha ingreso > "2003-09-18").
-* @returns {number} generación (1/2)
-*/
-function calcularGeneracion(fechaIngreso){
-    return (new Date(fechaIngreso) > new Date("2003-09-18")) ? 2 : 1
-} 
-
-/**
-* Obtener modalidad (97/73).
-* @returns {number} modalidad
-*/
-function calcularModalidad(fechaAltaImss){
-    const fechaLimite=new Date("1997-06-01") //>30/06/97 es genaracion 2
-    return (fechaAltaImss>fechaLimite) ? 97 : 73
-}
-
-function verificaCampos(){
-    //verifica el NSS
-    const ssn = document.getElementById("nss").value;
-    const ssnRegex = /^[0-9]{11}$/;
-    const test=ssnRegex.test(ssn)
-    // console.log("Test:",test)
-    if (!test) {
-        //document.getElementById("mensaje-error").style.display = "none"; // Ocultar mensaje de error
-        Swal.fire("Número de Seguro Social inválido!");
-        return false
-    }
-    //document.getElementById("mensaje-error").style.display = "block"; // Mostrar mensaje de error
-    let dato=document.querySelector("#correo").value.trim()
-    if(dato==="") document.querySelector("#correo").value="sd"
-    dato=document.querySelector("#telefono").value.trim()
-    if(dato==="") document.querySelector("#telefono").value="sd"
-    return true
-}
 
 /**
 * Obtener datos del formulario.
@@ -513,7 +634,7 @@ function obtenerDatosDeFormulario(){
 * @returns {number} salario mensual base
 */
 function obtenerSm(puesto){
-    const datoBuscado = tabuladorVigente.find(elemento => elemento.clave === puesto);
+    const datoBuscado = tabuladorVigente.find(elemento => elemento.clave === puesto)
     return datoBuscado.sm
 }
 
@@ -525,7 +646,7 @@ document.getElementById("btnBuscaEmpleado").addEventListener("click", function(e
     const numEmp=document.querySelector("#numEmp").value.trim()
     
     if (numEmp === "") {
-        console.log("El campo de texto está vacío.");
+        Swal.fire("El campo número de empleado no debe  estar vacío.");
         return false
     }
     //buscar dato en la bd
@@ -548,13 +669,14 @@ document.getElementById("btnBuscaEmpleado").addEventListener("click", function(e
             document.querySelector("#nss").value=datos.nss
             
             let option=datos.puesto
-            let select = document.getElementById("tabulador");
-            for (let i = 0; i < select.options.length; i++) {
-                if (select.options[i].value === option) {
-                    select.options[i].selected = true;
-                    break;
-                }
-            }
+            activaOpcionEnSelect("tabulador",option)
+
+            option=datos.ct
+            activaOpcionEnSelect("ct",option)
+
+            const sexo=datos.sexo
+            establecerGenero("sexo",sexo)
+
             document.querySelector("#ingreso").value=datos.fecha_ingreso_unacar
             option=datos.mes_ingreso_imss
             select = document.getElementById("mesIngresoIMSS");
@@ -572,6 +694,7 @@ document.getElementById("btnBuscaEmpleado").addEventListener("click", function(e
             Swal.fire("No esta, favor de cargar datos");
             const input = document.getElementById('numEmp');
             input.style.backgroundColor = '#FFC0CB';
+            limpiaControles()
         }
     })
     .catch(resp=>{
@@ -585,13 +708,13 @@ document.getElementById("btnBuscaEmpleado").addEventListener("click", function(e
 document.getElementById("btnGuardarDatos").addEventListener("click", function(event) {
     event.preventDefault()
     if(!verificaCampos()){
-        Swal.fire(data.message)
         return false
     }
     const f=document.querySelector("#formulario")
     const df=new FormData(f)
     const fjson=Object.fromEntries(df)
-    // console.log("(397) formulario:",fjson)
+    console.log("(634) formulario:",fjson)
+    // console.log("(635) lamado a:",`${URLsocios}/add`)
     fetch(`${URLsocios}/add`,{
         method: "POST",
         headers: {
@@ -600,20 +723,21 @@ document.getElementById("btnGuardarDatos").addEventListener("click", function(ev
         body: JSON.stringify(fjson)
     })
     .then(data=>{
-        console.log(`resp en add: ${URLsocios}/add:`,data)
+        // console.log(`resp en add: ${URLsocios}/add:`,data)
         if(!data.ok) return Promise.reject("Respuesta fallida del servidor")
         return data.json()
     })
     .then(data=>{
-        // console.log("respuesta serv:",data)
+        console.log("respuesta serv al dar de alta:",data)
         if(data.success){
-            Swal.fire(data.message);
+            if(data.success){Swal.fire(data.message);}
+            else{Swal.fire(data.message);}
         }else{
-            Swal.fire("no success");
+            Swal.fire(data.message+","+data.error);
         }
     })
-    .catch(resp=>{
-        Swal.fire(resp);
+    .catch(err=>{
+        Swal.fire("Error(712):"+err.message);
     })
 })
 
@@ -633,42 +757,19 @@ document.getElementById("formulario").addEventListener("submit", function(event)
     return
 })
 
-function leeTabuladorDeLaBD(){
-    return fetch('/tabulador/all')
-    .then(resp=>{
-        if(!resp.ok){
-            throw new Error(`Error ${resp.status}: ${resp.statusText}`)
-        }
-        return resp.json()
-    })
-    .then(data=>{
-        const datos=data.data
-        return datos
-    })
-    .catch(error=>{
-        console.log(error)
-        return new Promise((resolve,reject)=>{
-            reject("Error al pedir datos de tabulador desde la bd")
-        })
-    })
-}
+
 
 /**
- * LLena el combo box "tabulador" CCT pag 35
+ * LLena el combo box "tabulador" ver CCT pag 35
  */
 function cargarDatosDeTabulador(){
-    leeTabuladorDeLaBD()
+    cargadDatosDelServer(URLgetTabulador)
     .then(datos=>{
         // console.log("recibi datos tab:", datos)
         tabuladorVigente=datos
-        //
-        const combo=document.getElementById("tabulador")
-        tabuladorVigente.forEach(item=>{
-            const opcion=document.createElement("option");
-            opcion.value=item.clave
-            opcion.textContent=item.descripcion
-            combo.appendChild(opcion)
-        })
+        const nombreDelCombo="tabulador"
+        pueblaSelect(nombreDelCombo,tabuladorVigente)
+
     })
     .catch(error=>{
         console.log("Al tratar de leer el tabulador de la bd:",error)
@@ -676,6 +777,25 @@ function cargarDatosDeTabulador(){
     })
 }
 
+/**
+ * LLena el combo box ct (centro de trabajo)
+ */
+function cargarDatosDelCT(){
+    cargadDatosDelServer(URLgetCt)
+    .then(datos=>{
+        // console.log("recibi datos ct:", datos)
+        centroDeTrabajo=datos
+        nombreDelCombo="ct"
+        pueblaSelect(nombreDelCombo,centroDeTrabajo)
+
+    })
+    .catch(error=>{
+        console.log("Al tratar de leer el centro de trabajo del server:",error)
+        Swal.fire("No se pudieron leer datos de la BD");
+    })
+}
+
 window.onload=function(){
     cargarDatosDeTabulador()
+    cargarDatosDelCT()
 }

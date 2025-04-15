@@ -2,16 +2,20 @@ import express from 'express'
 import {join} from 'node:path'
 import AppDaoBetterSQLite from '../controllers/DaoBetterSqlite3.js'
 import ModelTabulador from "../models/model.tabulador.js";
+import dotenv from 'dotenv'
 
+dotenv.config()
+const mydb=process.env.SQLITE_DB || 'socios.sqlite'
 //controlador de la base de datos
-const pathDb=join(process.cwd(),'socios.sqlite')
+// const pathDb=join(process.cwd(),'socios.sqlite')
+const pathDb=join(process.cwd(),mydb)
 const controllerDB=new AppDaoBetterSQLite(pathDb)
 
 const mc=new ModelTabulador(controllerDB)
 const router = express.Router();
 
 // Home page route.
-router.get("/", function (req, res) {
+router.get("/", function (_, res) {
     res.setHeader('Content-Type', 'text/html');
     res.send("mensaje tabulador");
 });
@@ -35,7 +39,7 @@ router.get('/clave/:clave', (req, res) => {
 })
 
 //espera llamado get: http://localhost:3000/tabulador/all
-router.get('/all', (req,res)=>{
+router.get('/all', (_,res)=>{
     //fata esta parte
     const resp=mc.getAll()
     res.status(200).json(resp);

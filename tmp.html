@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Sexo - W3.CSS</title>
+    <!-- Incluir W3.CSS -->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    
+</head>
+<body class="w3-light-grey">
+    <script>
+        // Función para establecer el género seleccionado
+        function establecerGenero(genero) {
+            const radio = document.querySelector(`input[name="genero"][value="${genero}"]`);
+            if (radio) {
+                radio.checked = true;
+                console.log(`Género establecido a: ${genero}`);
+            } else {
+                console.error(`Opción de género no encontrada: ${genero}`);
+            }
+        }
+
+        // Función para obtener el género seleccionado
+        function obtenerGenero() {
+            const generoSeleccionado = document.querySelector('input[name="genero"]:checked');
+            
+            if (generoSeleccionado) {
+                alert(`Género seleccionado: ${generoSeleccionado.value}`);
+                return generoSeleccionado.value;
+            } else {
+                alert('Ningún género seleccionado');
+                return null;
+            }
+        }
+
+        // También puedes establecer un género por defecto al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Establecer "femenino" como valor por defecto (opcional)
+            // establecerGenero('femenino');
+        });
+    </script>
+</body>
+</html>
