@@ -53,7 +53,7 @@ class AppDaoBetterSQLite{
         try {
             //si la consulta fue satisfactoria pero no hay datos  devuelve undefined 
             const res = this.db.prepare(sql).get(params)
-            console.log("sql:",sql,params)
+            // console.log("sql:",sql,params)
             // console.log("Dao(56)res:",res)
             return {
                 success:true,

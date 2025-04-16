@@ -23,14 +23,37 @@ Para calcular el dígito verificador, cada uno de los primeros 10 dígitos se mu
 ## contar
 
 ```sql
+/*contar femenino*/
 SELECT COUNT(*) 
-FROM personas 
+FROM empleados 
 WHERE sexo = 'F';
 
+/*contar masculino*/
 SELECT COUNT(*) 
-FROM personas;
+FROM empleados 
+WHERE sexo = 'M';
 
-SELECT * 
-FROM personas 
-WHERE id IN (1, 2, 3);
+/*contar todos*/
+SELECT COUNT(*) 
+FROM empleados;
+
+/*contar docentes*/
+SELECT count(*) 
+FROM empleados 
+WHERE puesto like 'd%';
+
+/*contar administrativos*/
+SELECT count(*) 
+FROM empleados 
+WHERE puesto IN ('AAA', 'AA2', 'AAB', 'AAC','AAD','A01');
+
+/*contar manuales*/
+SELECT count(*) 
+FROM empleados 
+WHERE puesto IN ('AMB', 'AMC', 'ATA', 'ATB','ATC','ATD','A79');
+
+/*Generacion 2 si*/
+SELECT count(*)
+FROM empleados
+WHERE '2003-09-18' < fecha_ingreso_unacar;
 ```

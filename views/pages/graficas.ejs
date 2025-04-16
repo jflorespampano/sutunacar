@@ -132,8 +132,23 @@
         if(datos.sexo.length < 2){
             throw new Error("Faltan datos de sexo")
         }
-        const pm='M '+(datos.sexo[0]/(datos.sexo[0]+datos.sexo[1]))*100+'%'
-        const pf='F '+(datos.sexo[1]/(datos.sexo[0]+datos.sexo[1])*100)+'%'
+        const pm='M '
+            +
+            (
+                (datos.sexo[0]
+                /
+                (datos.sexo[0]+datos.sexo[1]))
+                *100).toFixed(1)
+            +
+            '%'
+        const pf='F '
+            +
+                (datos.sexo[1]
+                /
+                (datos.sexo[0]+datos.sexo[1])
+                *100).toFixed(1)
+            +
+            '%'
         ponerGrafica2Valores(
             "pieChartSexo",
             [pm, pf],
@@ -142,8 +157,25 @@
         if(datos.generacion.length < 2){
             throw new Error("Faltan datos de generación")
         }
-        const pg1='M '+(datos.generacion[0]/(datos.generacion[0]+datos.generacion[1]))*100+'%'
-        const pg2='F '+(datos.generacion[1]/(datos.generacion[0]+datos.generacion[1])*100)+'%'
+        const pg1='G1 '
+            +
+            (
+                (datos.generacion[0]
+                /
+                (datos.generacion[0]+datos.generacion[1]))
+                *100
+            ).toFixed(1)
+            +
+            '%'
+        const pg2='G2 '
+            +
+            (
+                datos.generacion[1]
+                /(datos.generacion[0]+datos.generacion[1])
+                *100
+            ).toFixed(1)
+            +
+            '%'
         ponerGrafica2Valores(
             "pieChartGeneracion",
             [pg1, pg2],
@@ -155,22 +187,27 @@
         const pman='Manuales '+
             (datos.segmento[0]
             /
-            (datos.segmento[0]+datos.segmento[1]+datos.segmento[2])
-            )*100
+            (
+                (datos.segmento[0]+datos.segmento[1]+datos.segmento[2])
+            )*100).toFixed(1)
             +
             '%'
         const pdoc='Docentes '+
-            (datos.segmento[1]
-            /
-            (datos.segmento[0]+datos.segmento[1]+datos.segmento[2])
-            )*100
+            (
+                (datos.segmento[1]
+                /
+                (datos.segmento[0]+datos.segmento[1]+datos.segmento[2])
+                )*100
+            ).toFixed(1)
             +
             '%'
         const padm='Administrativos '+
-            (datos.segmento[2]
-            /
-            (datos.segmento[0]+datos.segmento[1]+datos.segmento[2])
-            )*100
+            (
+                (datos.segmento[2]
+                /
+                (datos.segmento[0]+datos.segmento[1]+datos.segmento[2])
+                )*100
+            ).toFixed(1)
             +
             '%'
         ponerGrafica3Valores(
