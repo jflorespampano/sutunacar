@@ -1,3 +1,6 @@
+/**
+ * Actualiza sm del tabulador tomado de archivo json local
+ */
 import Database from "better-sqlite3";
 // import fs from 'fs'
 import { tabuladorVigente } from './datos.js'

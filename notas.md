@@ -13,9 +13,9 @@ Para calcular el dígito verificador, cada uno de los primeros 10 dígitos se mu
 
 |numEmp  | NSS           | edad | fecha ingreso |   |
 |--------|---------------|------|---------------|---|
-| 501    | 62886429101   | 40   | 01/02/1988    |   |
-| 502    | 62886429158   | 50   | 01/02/2014    |g2 complementaria|
-| 503    | 72046429984   | 25   | 01/02/2004    |   |
+| 5001    | 62886429101   | 40   | 01/02/1988    |   |
+| 5002    | 62886429158   | 50   | 01/02/2014    |g2 complementaria|
+| 5003    | 72046429984   | 25   | 01/02/2004    |   |
 
 
 
@@ -56,4 +56,16 @@ WHERE puesto IN ('AMB', 'AMC', 'ATA', 'ATB','ATC','ATD','A79');
 SELECT count(*)
 FROM empleados
 WHERE '2003-09-18' < fecha_ingreso_unacar;
+```
+## notas
+
+Ver jest para pruebs unitarias
+[intro](https://tecnops.es/testing-en-javascript-con-jest-parte-1-de-2/)
+y para productivo:
+
+```sh
+npm install -g pm2
+pm2 start app.js
+pm2 save
+pm2 startup
 ```

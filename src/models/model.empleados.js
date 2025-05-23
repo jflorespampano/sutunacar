@@ -196,16 +196,8 @@ class ModelEmpleados{
             const doc=this.getCount(sqlDocentes)
             const admin=this.getCount(sqlAdministrativos)
             const manu=this.getCount(sqlManuales)
-            console.log("(model.empleados(199))")
-            console.log("M:",M.data[0].count)
-            console.log("F:",F.data[0].count)
             const dsexo=[M.data[0].count,F.data[0].count]
-            console.log("Generacion 1:",g1.data[0].count)
-            console.log("Generacion 2:",g2.data[0].count)
             const dgen=[g1.data[0].count,g2.data[0].count]
-            console.log("Doc:",doc.data[0].count)
-            console.log("Admin:",admin.data[0].count)
-            console.log("Manu:",manu.data[0].count)
             const dseg=[manu.data[0].count,doc.data[0].count,admin.data[0].count]
             const data={
                 sexo:dsexo,//[40,60],
@@ -219,7 +211,7 @@ class ModelEmpleados{
                 "error":""
             })
         } catch (error) {
-            console.log("error-->",error)
+            console.log("🚀 ~ :222 ~ ModelEmpleados ~ getEstadisticas ~ error:", error)
             return({
                 "success":false,
                 "data":null,

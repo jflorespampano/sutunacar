@@ -25,6 +25,9 @@ let datosEmpleado={
     sm:0
 }
 
+/**
+ * Objeto datos cálculo y sus funciones
+ */
 let datosCalculo={
     "sb":0,
     "quinquenio":0,
@@ -58,6 +61,11 @@ let datosCalculo={
     aguinaldo:function(){
         return this.sb
     },
+    /**
+     * Devuelve el salario base según la comisión
+     * @param {*} sm 
+     * @returns 
+     */
     sbNosotros:function(sm){
         //SUMA(sb+quinquenio+despensa+arte)+(primaV+estimuloCalidad+ajusteCal)/12+gratXjuvilacion
         this.sb=sm
@@ -76,6 +84,11 @@ let datosCalculo={
         return this.totalsc
 
     },
+    /**
+     * Devuelve el salario base según el cálculo actual
+     * @param {*} sm 
+     * @returns 
+     */
     sbActual:function(sm){
         //SUMA(sb+quinquenio+despensa+arte)+(primaV+estimuloCalidad+ajusteCal)/12+gratXjuvilacion
         this.sb=sm
@@ -93,6 +106,11 @@ let datosCalculo={
         + 0
         return this.totalsc
     },
+    /**
+     * Salario base para la generación 1
+     * @param {*} sm 
+     * @returns 
+     */
     sbG1:function(sm){
         //SUMA(sb+quinquenio+despensa+arte)+(primaV+estimuloCalidad+ajusteCal+aguinaldo)/12
         this.sb=sm
@@ -110,6 +128,11 @@ let datosCalculo={
         //
         return this.totalsc
     },
+    /**
+     * Salario base para la generación 2
+     * @param {*} sm 
+     * @returns 
+     */
     sbG2:function(sm){
         //SUMA(sb+quinquenio+despensa+arte)+(primaV+estimuloCalidad+ajusteCal+aguinaldo)/12
         this.sb=sm
@@ -132,8 +155,9 @@ let datosCalculo={
     }
 
 }
+//-----------------> fin de objeto datosCalculo ------------------------->
 
-//-----------------> para biblioteca ------------------------->
+//-----------------> funciones para biblioteca ------------------------->
 /**
 * Calcula una edad con base en una fecha dada
 * @param {string} fecha
@@ -201,11 +225,11 @@ function quinquenio(datosEmpleado){
 
 /**
  * 
- * @param {*} URLgetTabulador 
- * @returns 
+ * @param {*} URL
+ * @returns datos de la URL
  */
-function cargadDatosDelServer(URLgetTabulador){
-    return fetch(`${URLgetTabulador}`)
+function cargadDatosDelServer(URL){
+    return fetch(`${URL}`)
     .then(resp=>{
         if(!resp.ok){
             throw new Error(`Error ${resp.status}: ${resp.statusText}`)
@@ -213,13 +237,12 @@ function cargadDatosDelServer(URLgetTabulador){
         return resp.json()
     })
     .then(data=>{
-        const datos=data.data
-        return datos
+        return data
     })
     .catch(error=>{
         console.log(error)
         return new Promise((_,reject)=>{
-            reject("Error al pedir datos de tabulador desde la bd")
+            reject("Error al leer la bd ")
         })
     })
 }
@@ -241,6 +264,11 @@ function calcularModalidad(fechaAltaImss){
     return (fechaAltaImss>fechaLimite) ? 97 : 73
 }
 
+/**
+ * Verifica un campo numérico
+ * @param {*} valor 
+ * @returns true/false
+ */
 function verificaCampoNumerico(valor){
     // Verificar si el campo está vacío
     if (edad === "") {
@@ -547,7 +575,7 @@ function mostrarDatosGenerales(){
 */
 const calculoSimulacion=(datosEmpleado)=>{
     mostrarDatosGenerales()
-    console.log("(359) datoscalculo:",datosCalculo)
+    // console.log("(359) datoscalculo:",datosCalculo)
     if(datosEmpleado.generacion===2){
         if(datosEmpleado.edad>=60){
             if(datosEmpleado.edad>=65 && datosEmpleado.edadLaboral>=15){
@@ -737,7 +765,7 @@ document.getElementById("btnGuardarDatos").addEventListener("click", function(ev
         }
     })
     .catch(err=>{
-        Swal.fire("Error(712):"+err.message);
+        Swal.fire("Error(739):"+err.message);
     })
 })
 
@@ -748,7 +776,7 @@ document.getElementById("formulario").addEventListener("submit", function(event)
     event.preventDefault()
     let datosEmpleado=obtenerDatosDeFormulario()
     if(datosEmpleado == null) return false
-    console.log("(603) datos empleado:",datosEmpleado)
+    // console.log("(603) datos empleado:",datosEmpleado)
     datosEmpleado.sm=obtenerSm(datosEmpleado.plaza) //obtener el salario mensual base
     //preparar datos para el calculo
     datosCalculo.prepararDatosCalculo(datosEmpleado)
@@ -766,14 +794,17 @@ function cargarDatosDeTabulador(){
     cargadDatosDelServer(URLgetTabulador)
     .then(datos=>{
         // console.log("recibi datos tab:", datos)
-        tabuladorVigente=datos
+        if(!datos.success){
+            throw new Error(datos.message)
+        }
+        tabuladorVigente=datos.data
         const nombreDelCombo="tabulador"
         pueblaSelect(nombreDelCombo,tabuladorVigente)
 
     })
     .catch(error=>{
         console.log("Al tratar de leer el tabulador de la bd:",error)
-        Swal.fire("No se pudieron leer datos de la BD");
+        Swal.fire("No se pudieron leer datos de la BD "+error.message);
     })
 }
 
@@ -784,14 +815,18 @@ function cargarDatosDelCT(){
     cargadDatosDelServer(URLgetCt)
     .then(datos=>{
         // console.log("recibi datos ct:", datos)
-        centroDeTrabajo=datos
+        // console.log("recibi datos ct:", datos)
+        if(!datos.success){
+            throw new Error(datos.message)
+        }
+        centroDeTrabajo=datos.data
         nombreDelCombo="ct"
         pueblaSelect(nombreDelCombo,centroDeTrabajo)
 
     })
     .catch(error=>{
         console.log("Al tratar de leer el centro de trabajo del server:",error)
-        Swal.fire("No se pudieron leer datos de la BD");
+        Swal.fire("No se pudieron leer datos de la BD "+error.message);
     })
 }
 
